@@ -1,0 +1,7 @@
+datetime
+pandas
+openai
+os
+streamlit
+streamlit-option-menu
+urllib
