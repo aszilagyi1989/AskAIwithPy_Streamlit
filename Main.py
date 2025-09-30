@@ -8,7 +8,12 @@ import pandas as pd
 from io import BytesIO
 import requests
 
-answers = pd.DataFrame(columns = ['Model', 'Question', 'Answer'])
+@st.cache_resource
+def initialization_function():
+  answers = pd.DataFrame(columns = ['Model', 'Question', 'Answer'])
+  return answers
+  
+answers = initialization_function()
 
 st.set_page_config(
   layout = 'wide',
