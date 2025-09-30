@@ -5,6 +5,8 @@ from streamlit_option_menu import option_menu
 from datetime import datetime
 import urllib
 import pandas as pd
+from io import BytesIO
+import requests
 
 answers = pd.DataFrame(columns = ['Model', 'Question', 'Answer'])
 
@@ -48,8 +50,6 @@ elif selected == 'Image':
   if st.button('Draw me!'):
     try:
       client = OpenAI(api_key = password2)
-      # model = 'dall-e-3' # 'gpt-image-1', 'gpt-image-0721-mini-alpha', 'dall-e-2', and 'dall-e-3'
-        
       response = client.images.generate(
         model = model2, 
         prompt = desciption, 
@@ -57,8 +57,14 @@ elif selected == 'Image':
         
       now = datetime.now().strftime('%Y%m%d%H%M%S')
       filename = 'image' + now + '.png'
-      urllib.request.urlretrieve(response.data[0].url, filename)
+      # urllib.request.urlretrieve(response.data[0].url, filename)
       st.image(response.data[0].url)
+      
+      r = requests.get(response.data[0].url)
+      st.download_button(label = 'Download Image',
+                        data = BytesIO(r.content),
+                        file_name = filename,
+                        mime = 'image/png')
     except Exception as e:
       st.error(f'An Error happened: {e}')
   
