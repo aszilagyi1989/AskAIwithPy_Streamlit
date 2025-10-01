@@ -12,8 +12,14 @@ import requests
 def initialization_function():
   answers = pd.DataFrame(columns = ['Model', 'Question', 'Answer'])
   return answers
+
+@st.cache_resource
+def initialization_function2():
+  gallery = []
+  return gallery
   
 answers = initialization_function()
+gallery = initialization_function2()
 
 st.set_page_config(
   layout = 'wide',
@@ -26,9 +32,10 @@ st.set_page_config(
   
 st.title('Ask AI with Py')
 
-selected = option_menu(None, ['Chat', 'Image'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
+selected = option_menu(None, ['Chat', 'Image', 'Galery'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
 
 if selected == 'Chat': 
+  
   password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
   model = st.selectbox('Choose AI Model:', options = ['gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
   question = st.text_area('Write here your question:', placeholder = 'Ask something!')
@@ -41,7 +48,6 @@ if selected == 'Chat':
       st.text(answer)
       now = datetime.now().strftime('%Y%m%d%H%M%S')
       filename = 'Chat' + now + '.txt'
-      # answers = pd.concat([model, question, answer])
       answers.loc[len(answers)] = [model, question, answer]
       st.download_button(label = 'Download Chat', data = answers.to_csv(index = False).encode('utf-8'), file_name = filename) # ';'.join([model, mquestion, answer])
     except Exception as e:
@@ -49,6 +55,7 @@ if selected == 'Chat':
   
   
 elif selected == 'Image':
+  
   password2 = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
   model2 = st.selectbox('Choose AI Model:', options = ['dall-e-3', 'gpt-image-1', 'gpt-image-0721-mini-alpha', 'dall-e-2'])
   desciption = st.text_area('What should the picture depict?', placeholder = 'Describe here...')
@@ -63,9 +70,12 @@ elif selected == 'Image':
       now = datetime.now().strftime('%Y%m%d%H%M%S')
       filename = 'image' + now + '.png'
       # urllib.request.urlretrieve(response.data[0].url, filename)
-      st.image(response.data[0].url)
       
-      r = requests.get(response.data[0].url)
+      link = response.data[0].url
+      gallery.append(link)
+      st.image(link)
+      
+      r = requests.get(link)
       st.download_button(label = 'Download Image',
                         data = BytesIO(r.content),
                         file_name = filename,
@@ -73,3 +83,10 @@ elif selected == 'Image':
     except Exception as e:
       st.error(f'An Error happened: {e}')
   
+elif selected == 'Galery':
+  
+  if len(gallery) == 1:
+    st.image(gallery[0])
+  if len(gallery) > 1:
+    PictureRow = st.slider('Choose picture from your actual online gallery:', 0, len(gallery) - 1, 0)
+    st.image(gallery[PictureRow])
