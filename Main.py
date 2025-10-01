@@ -87,6 +87,23 @@ elif selected == 'Galery':
   
   if len(gallery) == 1:
     st.image(gallery[0])
-  if len(gallery) > 1:
+    
+    now = datetime.now().strftime('%Y%m%d%H%M%S')
+    filename = 'image' + now + '.png'
+    r = requests.get(gallery[0])
+    st.download_button(label = 'Download Image',
+                        data = BytesIO(r.content),
+                        file_name = filename,
+                        mime = 'image/png')
+                        
+  elif len(gallery) > 1:
     PictureRow = st.slider('Choose picture from your actual online gallery:', 0, len(gallery) - 1, 0)
     st.image(gallery[PictureRow])
+    
+    now = datetime.now().strftime('%Y%m%d%H%M%S')
+    filename = 'image' + now + '.png'
+    r = requests.get(gallery[PictureRow])
+    st.download_button(label = 'Download Image',
+                        data = BytesIO(r.content),
+                        file_name = filename,
+                        mime = 'image/png')
