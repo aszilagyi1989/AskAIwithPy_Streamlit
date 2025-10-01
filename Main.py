@@ -107,3 +107,6 @@ elif selected == 'Galery':
                         data = BytesIO(r.content),
                         file_name = filename,
                         mime = 'image/png')
+
+  else:
+    st.success("You didn't make any image in this online session still.")
