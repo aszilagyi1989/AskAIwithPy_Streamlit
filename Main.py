@@ -38,14 +38,15 @@ if selected == 'Chat':
   
   password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
   model = st.selectbox('Choose AI Model:', options = ['gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
-  question = st.text_area('Write here your question:', placeholder = 'Ask something!')
+  question = st.text_area('Write here your question:', placeholder = 'Ask something!', value = None) # question = st.chat_input(placeholder = 'Write here your question:') 
   if st.button('Answer me!'): 
     try:
       client = OpenAI(api_key = password)
       model = model # os.environ['OPENAI_MODEL']
       response = client.chat.completions.create(model = model, messages = [{"role": "user", "content": question},])
       answer = response.choices[0].message.content.strip()
-      st.text(answer)
+      message = st.chat_message('ai') # st.text(answer)
+      message.write(answer)
       now = datetime.now().strftime('%Y%m%d%H%M%S')
       filename = 'Chat' + now + '.txt'
       answers.loc[len(answers)] = [model, question, answer]
@@ -73,40 +74,45 @@ elif selected == 'Image':
       
       link = response.data[0].url
       gallery.append(link)
-      st.image(link)
-      
       r = requests.get(link)
-      st.download_button(label = 'Download Image',
-                        data = BytesIO(r.content),
-                        file_name = filename,
-                        mime = 'image/png')
+      
+      left_co, cent_co,last_co = st.columns(3)
+      with cent_co:
+        st.image(link)
+        st.download_button(label = 'Download Image',
+                          data = BytesIO(r.content),
+                          file_name = filename,
+                          mime = 'image/png')
     except Exception as e:
       st.error(f'An Error happened: {e}')
   
 elif selected == 'Galery':
   
-  if len(gallery) == 1:
-    st.image(gallery[0])
-    
-    now = datetime.now().strftime('%Y%m%d%H%M%S')
-    filename = 'image' + now + '.png'
-    r = requests.get(gallery[0])
-    st.download_button(label = 'Download Image',
-                        data = BytesIO(r.content),
-                        file_name = filename,
-                        mime = 'image/png')
-                        
-  elif len(gallery) > 1:
-    PictureRow = st.slider('Choose picture from your actual online gallery:', 0, len(gallery) - 1, 0)
-    st.image(gallery[PictureRow])
-    
-    now = datetime.now().strftime('%Y%m%d%H%M%S')
-    filename = 'image' + now + '.png'
-    r = requests.get(gallery[PictureRow])
-    st.download_button(label = 'Download Image',
-                        data = BytesIO(r.content),
-                        file_name = filename,
-                        mime = 'image/png')
-
-  else:
-    st.success("You didn't make any image in this online session still.")
+  left_co, cent_co,last_co = st.columns(3)
+  with cent_co:
+  
+    if len(gallery) == 1:
+      st.image(gallery[0])
+      
+      now = datetime.now().strftime('%Y%m%d%H%M%S')
+      filename = 'image' + now + '.png'
+      r = requests.get(gallery[0])
+      st.download_button(label = 'Download Image',
+                          data = BytesIO(r.content),
+                          file_name = filename,
+                          mime = 'image/png')
+                          
+    elif len(gallery) > 1:
+      PictureRow = st.slider('Choose picture from your actual online gallery:', 0, len(gallery) - 1, 0)
+      st.image(gallery[PictureRow])
+      
+      now = datetime.now().strftime('%Y%m%d%H%M%S')
+      filename = 'image' + now + '.png'
+      r = requests.get(gallery[PictureRow])
+      st.download_button(label = 'Download Image',
+                          data = BytesIO(r.content),
+                          file_name = filename,
+                          mime = 'image/png')
+  
+    else:
+      st.success("You didn't make any image in this online session still.")
