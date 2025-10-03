@@ -46,8 +46,8 @@ if selected == 'Chat':
         model = model # os.environ['OPENAI_MODEL']
         response = client.chat.completions.create(model = model, messages = [{"role": "user", "content": question},])
         answer = response.choices[0].message.content.strip()
-        message = st.chat_message('ai') # st.text(answer)
-        message.write(answer)
+        st.text(answer) # message = st.chat_message('ai')
+        # message.write(answer)
         now = datetime.now().strftime('%Y%m%d%H%M%S')
         filename = 'Chat' + now + '.txt'
         answers.loc[len(answers)] = [model, question, answer]
