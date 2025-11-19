@@ -37,7 +37,7 @@ selected = option_menu(None, ['Chat', 'Image', 'Galery'], menu_icon = 'cast', de
 if selected == 'Chat': 
   
   password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
-  model = st.selectbox('Choose AI Model:', options = ['gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
+  model = st.selectbox('Choose AI Model:', options = ['gpt-5.1', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
   question = st.text_area('Write here your question:', placeholder = 'Ask something!', value = None) # question = st.chat_input(placeholder = 'Write here your question:') 
   if st.button('Answer me!'): 
     try:
