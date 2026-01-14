@@ -82,10 +82,7 @@ elif selected == 'Image':
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
-          with open(filename, "wb") as f:
-            f.write(image_bytes)
           
-        
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
           st.image(image_bytes) # link
