@@ -37,14 +37,14 @@ selected = option_menu(None, ['Chat', 'Image', 'Galery'], menu_icon = 'cast', de
 if selected == 'Chat': 
   
   password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
-  model = st.selectbox('Choose AI Model:', options = ['gpt-5.1', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
+  model = st.selectbox('Choose AI Model:', options = ['gpt-5.2', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
   question = st.text_area('Write here your question:', placeholder = 'Ask something!', value = None) # question = st.chat_input(placeholder = 'Write here your question:') 
   if st.button('Answer me!'): 
     try:
       with st.spinner('In progress...'):
         client = OpenAI(api_key = password)
         model = model # os.environ['OPENAI_MODEL']
-        response = client.chat.completions.create(model = model, messages = [{"role": "user", "content": question},])
+        response = client.chat.completions.create(model = model, messages = [{"role": "system", "content": "You are a beautiful girl."},{"role": "user", "content": question}])
         answer = response.choices[0].message.content.strip()
         st.text(answer) # message = st.chat_message('ai')
         # message.write(answer)
@@ -59,7 +59,7 @@ if selected == 'Chat':
 elif selected == 'Image':
   
   password2 = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
-  model2 = st.selectbox('Choose AI Model:', options = ['dall-e-3', 'gpt-image-1', 'gpt-image-0721-mini-alpha', 'dall-e-2'])
+  model2 = st.selectbox('Choose AI Model:', options = ['dall-e-3', 'chatgpt-image-latest', 'gpt-image-1.5', 'gpt-image-1', 'gpt-image-1-mini']) #  'gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'chatgpt-image-latest', 'dall-e-2', and 'dall-e-3'.
   desciption = st.text_area('What should the picture depict?', placeholder = 'Describe here...')
   if st.button('Draw me!'):
     try:
