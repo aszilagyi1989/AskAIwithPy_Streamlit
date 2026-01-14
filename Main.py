@@ -3,10 +3,10 @@ import os
 from openai import OpenAI
 from streamlit_option_menu import option_menu
 from datetime import datetime
-import urllib
 import pandas as pd
 from io import BytesIO
 import requests
+import base64
 
 @st.cache_resource
 def initialization_function():
@@ -72,19 +72,28 @@ elif selected == 'Image':
           
         now = datetime.now().strftime('%Y%m%d%H%M%S')
         filename = 'image' + now + '.png'
-        # urllib.request.urlretrieve(response.data[0].url, filename)
         
-        link = response.data[0].url
-        gallery.append(link)
-        r = requests.get(link)
+        if model2 == 'dall-e-3':
+          link = response.data[0].url
+          r = requests.get(link)
+          image_bytes = BytesIO(r.content)
+          gallery.append(image_bytes) # link
+        else:
+          image_base64 = response.data[0].b64_json
+          image_bytes = base64.b64decode(image_base64)
+          gallery.append(image_bytes)
+          with open(filename, "wb") as f:
+            f.write(image_bytes)
+          
         
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
-          st.image(link)
+          st.image(image_bytes) # link
           st.download_button(label = 'Download Image',
-                            data = BytesIO(r.content),
+                            data = image_bytes, # BytesIO(r.content)
                             file_name = filename,
                             mime = 'image/png')
+          
     except Exception as e:
       st.error(f'An Error happened: {e}')
   
@@ -98,9 +107,9 @@ elif selected == 'Galery':
       
       now = datetime.now().strftime('%Y%m%d%H%M%S')
       filename = 'image' + now + '.png'
-      r = requests.get(gallery[0])
+      # r = requests.get(gallery[0])
       st.download_button(label = 'Download Image',
-                          data = BytesIO(r.content),
+                          data = gallery[0], # BytesIO(r.content),
                           file_name = filename,
                           mime = 'image/png')
                           
@@ -110,9 +119,9 @@ elif selected == 'Galery':
       
       now = datetime.now().strftime('%Y%m%d%H%M%S')
       filename = 'image' + now + '.png'
-      r = requests.get(gallery[PictureRow])
+      # r = requests.get(gallery[PictureRow])
       st.download_button(label = 'Download Image',
-                          data = BytesIO(r.content),
+                          data = gallery[PictureRow], # BytesIO(r.content),
                           file_name = filename,
                           mime = 'image/png')
   
