@@ -1,7 +1,5 @@
 datetime
 gtts
-libasound2-dev
-libpulse-dev
 openai
 pandas
 pygame
