@@ -57,24 +57,24 @@ if selected == 'Chat':
         filename = 'Chat' + now + '.txt'
         answers.loc[len(answers)] = [model, question, answer]
         
-        response = client.chat.completions.create(
-          model = model,
-          messages = [
-            {"role": "system", "content": "You are a language detection assistant. Return only the ISO 639-1 language code (e.g., 'en', 'es', 'fr') for the provided text. Do not provide any other text."},
-            {"role": "user", "content": question}
-          ],
-          temperature = 0 # Low temperature for consistent, factual results
-        )
-        language = response.choices[0].message.content.strip()
-
-        tts = gTTS(text = answer, lang = language) # , lang = 'en' # answers['Answer'].iloc[-1]
-        tts.write_to_fp(mp3_fp)
-
-        mp3_fp.seek(0)
-
-        pygame.mixer.init()
-        pygame.mixer.music.load(mp3_fp, 'mp3')
-        pygame.mixer.music.play()
+        # response = client.chat.completions.create(
+        #   model = model,
+        #   messages = [
+        #     {"role": "system", "content": "You are a language detection assistant. Return only the ISO 639-1 language code (e.g., 'en', 'es', 'fr') for the provided text. Do not provide any other text."},
+        #     {"role": "user", "content": question}
+        #   ],
+        #   temperature = 0 # Low temperature for consistent, factual results
+        # )
+        # language = response.choices[0].message.content.strip()
+        # 
+        # tts = gTTS(text = answer, lang = language) # , lang = 'en' # answers['Answer'].iloc[-1]
+        # tts.write_to_fp(mp3_fp)
+        # 
+        # mp3_fp.seek(0)
+        # 
+        # pygame.mixer.init()
+        # pygame.mixer.music.load(mp3_fp, 'mp3')
+        # pygame.mixer.music.play()
         
         st.download_button(label = 'Download Chat', data = answers.to_csv(index = False).encode('utf-8'), file_name = filename) # ';'.join([model, mquestion, answer])
     except Exception as e:
