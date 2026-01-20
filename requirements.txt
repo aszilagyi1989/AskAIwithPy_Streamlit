@@ -1,5 +1,6 @@
 datetime
 gtts
+libpulse-dev
 openai
 pandas
 pygame
