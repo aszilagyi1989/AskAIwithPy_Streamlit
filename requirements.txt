@@ -1,10 +1,7 @@
-base64
 datetime
 gtts
-io
 openai
 pandas
 pygame
-requests
 streamlit
 streamlit-option-menu
