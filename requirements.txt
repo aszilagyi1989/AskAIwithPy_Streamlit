@@ -1,5 +1,10 @@
+base64
 datetime
-pandas
+gtts
+io
 openai
+pandas
+pygame
+requests
 streamlit
 streamlit-option-menu

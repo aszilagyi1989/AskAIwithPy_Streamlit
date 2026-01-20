@@ -7,6 +7,8 @@ import pandas as pd
 from io import BytesIO
 import requests
 import base64
+from gtts import gTTS
+import pygame
 
 @st.cache_resource
 def initialization_function():
@@ -17,14 +19,16 @@ def initialization_function():
 def initialization_function2():
   gallery = []
   return gallery
-
+    
 answers = initialization_function()
 gallery = initialization_function2()
+
+mp3_fp = BytesIO()
 
 st.set_page_config(
   layout = 'wide',
   page_title = 'Ask AI with Python',
-  page_icon = 'https://map.ksh.hu/timea/images/shortcut.ico',
+  page_icon = 'ikon.png', # https://map.ksh.hu/timea/images/shortcut.ico
   menu_items = {'Get help': 'mailto:adam.szilagyi@ksh.hu',
                 'Report a bug': 'mailto:adam.szilagyi@ksh.hu',
                 'About': 'This webapplication makes you able to chat and generate picture with ChatGPT through OpenAI module.'}
@@ -39,22 +43,42 @@ if selected == 'Chat':
   password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys")
   model = st.selectbox('Choose AI Model:', options = ['gpt-5.2', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
   question = st.text_area('Write here your question:', placeholder = 'Ask something!', value = None) # question = st.chat_input(placeholder = 'Write here your question:') 
+  
   if st.button('Answer me!'): 
     try:
       with st.spinner('In progress...'):
         client = OpenAI(api_key = password)
         model = model # os.environ['OPENAI_MODEL']
-        response = client.chat.completions.create(model = model, messages = [{"role": "system", "content": "You are a beautiful girl."},{"role": "user", "content": question}])
+        response = client.chat.completions.create(model = model, messages = [{"role": "system", "content": "You are a beautiful girl."}, {"role": "user", "content": question}], temperature = 0)
         answer = response.choices[0].message.content.strip()
         st.text(answer) # message = st.chat_message('ai')
         # message.write(answer)
         now = datetime.now().strftime('%Y%m%d%H%M%S')
         filename = 'Chat' + now + '.txt'
         answers.loc[len(answers)] = [model, question, answer]
+        
+        response = client.chat.completions.create(
+          model = model,
+          messages = [
+            {"role": "system", "content": "You are a language detection assistant. Return only the ISO 639-1 language code (e.g., 'en', 'es', 'fr') for the provided text. Do not provide any other text."},
+            {"role": "user", "content": question}
+          ],
+          temperature = 0 # Low temperature for consistent, factual results
+        )
+        language = response.choices[0].message.content.strip()
+
+        tts = gTTS(text = answer, lang = language) # , lang = 'en' # answers['Answer'].iloc[-1]
+        tts.write_to_fp(mp3_fp)
+
+        mp3_fp.seek(0)
+
+        pygame.mixer.init()
+        pygame.mixer.music.load(mp3_fp, 'mp3')
+        pygame.mixer.music.play()
+        
         st.download_button(label = 'Download Chat', data = answers.to_csv(index = False).encode('utf-8'), file_name = filename) # ';'.join([model, mquestion, answer])
     except Exception as e:
       st.error(f'An Error happened: {e}')
-  
   
 elif selected == 'Image':
   
@@ -124,3 +148,16 @@ elif selected == 'Galery':
   
     else:
       st.success("You didn't make any image in this online session still.")
+
+def get_language(text):
+  client = OpenAI(api_key = password)
+  model = model
+  response = client.chat.completions.create(
+    model = model,
+    messages = [
+      {"role": "system", "content": "You are a language detection assistant. Return only the ISO 639-1 language code (e.g., 'en', 'es', 'fr') for the provided text. Do not provide any other text."},
+      {"role": "user", "content": text}
+    ],
+    temperature = 0 # Low temperature for consistent, factual results
+  )
+  return response.choices[0].message.content.strip()

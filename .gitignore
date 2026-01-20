@@ -4,4 +4,4 @@
 .Ruserdata
 .env
 *.Rproj
-*.png
+*image*.png
