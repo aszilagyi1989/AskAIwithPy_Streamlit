@@ -148,16 +148,3 @@ elif selected == 'Galery':
   
     else:
       st.success("You didn't make any image in this online session still.")
-
-def get_language(text):
-  client = OpenAI(api_key = password)
-  model = model
-  response = client.chat.completions.create(
-    model = model,
-    messages = [
-      {"role": "system", "content": "You are a language detection assistant. Return only the ISO 639-1 language code (e.g., 'en', 'es', 'fr') for the provided text. Do not provide any other text."},
-      {"role": "user", "content": text}
-    ],
-    temperature = 0 # Low temperature for consistent, factual results
-  )
-  return response.choices[0].message.content.strip()
