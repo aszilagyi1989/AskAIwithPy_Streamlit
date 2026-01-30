@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.env
+*.Rproj
+*image*.png
+packages.txt
+*.mp4
+.streamlit/secrets.toml
