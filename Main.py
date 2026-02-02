@@ -49,7 +49,7 @@ else:
 
 st.title('Ask AI with Python')
 password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys", key = "my_key") # st.session_state.my_text 
-selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Galery', 'Video'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
+selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Gallery', 'Video'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
 
 if selected == 'Chat': 
   
@@ -141,7 +141,7 @@ elif selected == 'Image':
     except Exception as e:
       st.error(f'An Error happened: {e}')
   
-elif selected == 'Galery':
+elif selected == 'Gallery':
   
   left_co, cent_co,last_co = st.columns(3)
   with cent_co:
