@@ -230,7 +230,7 @@ elif selected == 'Video Gallery':
                           file_name = filename,
                           mime = 'image/png')
                           
-    elif len(galleryvideo_) > 1:
+    elif len(video_gallery) > 1:
       VideoRow = st.slider('Choose video from your actual online gallery:', 0, len(video_gallery) - 1, 0)
       st.video(video_gallery[VideoRow])
       
