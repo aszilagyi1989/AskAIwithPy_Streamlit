@@ -128,10 +128,11 @@ elif selected == 'Image':
           
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
-          if model2 == 'dall-e-3':
-            st.image(link) # st.image(image_bytes)
-          else:
-            st.image(image_bytes)
+          st.image(gallery[-1])
+          # if model2 == 'dall-e-3':
+          #   st.image(link) # st.image(image_bytes)
+          # else:
+          #   st.image(image_bytes)
             
           st.download_button(label = 'Download Image',
                              data = image_bytes, # BytesIO(r.content)
