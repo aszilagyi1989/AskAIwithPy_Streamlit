@@ -7,6 +7,7 @@ import pandas as pd
 from io import BytesIO
 import requests
 import base64
+from sqlalchemy import text
 # from PIL import Image
 # from gtts import gTTS
 # import pygame
@@ -52,7 +53,22 @@ else:
   if st.button("Logout"):
     st.logout()
 
+conn = st.connection("postgresql", type = "sql")
 
+try:
+  with conn.session as session:
+    session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
+      id SERIAL PRIMARY KEY, 
+      email TEXT UNIQUE, 
+      model VARCHAR(30), 
+      question TEXT UNIQUE, 
+      answer TEXT UNIQUE, 
+      date timestamp)"""))
+    session.commit()
+    st.success("Table 'chats' created successfully!")
+except Exception as e:
+  st.error(f"Error creating table: {e}")
+    
 st.title('Ask AI with Python')
 password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys", key = "my_key") # st.session_state.my_text 
 selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery', 'Video', 'Video Gallery'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
