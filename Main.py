@@ -190,62 +190,15 @@ elif selected == "Video":
       
       completed_video = client.videos.retrieve(video.id) 
       # print(completed_video)
+      while completed_video.status != "completed":
+        completed_video = client.videos.retrieve(video.id)
+        if completed_video.status == "failed":
+          st.error(f"This video can not be created: {completed_video}") # : {completed_video.message}
+          break
+        
       if completed_video.status == "completed":
-        st.success(f"This video is ready for download: {video.id}.mp4")
+        # st.success(completed_video)
+        st.success(f"You can download this video: {video.id}.mp4")
         video_content = client.videos.download_content(completed_video.id)
         video_bytes = video_content.read()
         st.video(video_bytes)
-        # video_url = completed_video.result.url
-        # response = requests.get(video_url)
-        # video_bytes = response.content
-        # st.download_button(
-        #   label = "Download video",
-        #   data = video_bytes,
-        #   file_name = f"{video.id}.mp4",
-        #   mime = "video/mp4"
-        # )
-        # response = client.videos.download_content(video_id = video.id)
-        # with open(f"{video.id}.mp4", "wb") as f:
-        #   video_data = f.write(response.content)
-        #   # video_data = f.read(response.content)
-        # st.download_button(
-        #     label = "Download video",
-        #     data = video_data,
-        #     file_name = f"{video.id}.mp4",
-        #     mime = "video/mp4")
-      else:
-        while completed_video.status != "completed":
-          completed_video = client.videos.retrieve(video.id)
-          if completed_video.status == "failed":
-            st.error(f"This video can not be created: {completed_video}") # : {completed_video.message}
-            break
-        
-        if completed_video.status == "completed":
-          st.success(completed_video)
-          st.success(f"This video is ready for download: {video.id}.mp4")
-          video_content = client.videos.download_content(completed_video.id)
-          video_bytes = video_content.read()
-          st.video(video_bytes)
-          # st.download_button(label = "Videó letöltése", # 🎬 
-          #                   data = video_content.read(), # A bináris adatok beolvasása
-          #                   file_name = f"{video.id}.mp4",
-          #                   mime = "video/mp4")
-          # video_url = completed_video.result.url
-          # response = requests.get(video_url)
-          # video_bytes = response.content
-          # st.download_button(
-          #   label = "Download video",
-          #   data = video_bytes,
-          #   file_name = f"{video.id}.mp4",
-          #   mime = "video/mp4"
-          # )
-          # response = client.videos.download_content(video_id = video.id)
-          # with open(f"{video.id}.mp4", "wb") as f:
-          #   video_data = f.write(response.content)
-          #   # video_data = f.read(response.content)
-          # st.download_button(
-          #   label = "Download video",
-          #   data = video_data,
-          #   file_name = f"{video.id}.mp4",
-          #   mime = "video/mp4")
-
