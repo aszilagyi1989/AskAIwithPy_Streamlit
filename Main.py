@@ -134,10 +134,10 @@ elif selected == 'Image':
           # else:
           #   st.image(image_bytes)
             
-          st.download_button(label = 'Download Image',
-                             data = gallery[-1], # image_bytes, # BytesIO(r.content)
-                             file_name = filename,
-                             mime = 'image/png')
+          # st.download_button(label = 'Download Image',
+          #                    data = gallery[-1], # image_bytes, # BytesIO(r.content)
+          #                    file_name = filename,
+          #                    mime = 'image/png')
           
     except Exception as e:
       st.error(f'An Error happened: {e}')
