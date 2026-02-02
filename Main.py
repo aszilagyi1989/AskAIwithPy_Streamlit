@@ -129,10 +129,7 @@ elif selected == 'Image':
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
           st.image(gallery[-1])
-          # if model2 == 'dall-e-3':
-          #   st.image(link) # st.image(image_bytes)
-          # else:
-          #   st.image(image_bytes)
+          # st.image(image_bytes)
             
           # st.download_button(label = 'Download Image',
           #                    data = gallery[-1], # image_bytes, # BytesIO(r.content)
@@ -180,30 +177,33 @@ elif selected == "Video":
   # size = st.selectbox('Choose siz:', options = ['1280x720', '720x1280'])
   content = st.text_area('Write here your question:', placeholder = 'What about the video?', value = None)
   
-  if st.button('Shoot me!'):
-    with st.spinner('In progress...'):
-      client = OpenAI(api_key = password)
+  try:
+    if st.button('Shoot me!'):
+      with st.spinner('In progress...'):
+        client = OpenAI(api_key = password)
     
-      video = client.videos.create(
-        model = model3,
-        prompt = content, # A futuristic city in the style of cyberpunk with neon lights. # A calico cat playing a piano on stage
-        size = "1280x720", # Optional: 720x1280, 1280x720, 1024x1792, 1792x1024
-        seconds = duration      # Optional: 4, 8, or 12 seconds
-      )
+        video = client.videos.create(
+          model = model3,
+          prompt = content, # A futuristic city in the style of cyberpunk with neon lights. # A calico cat playing a piano on stage
+          size = "1280x720", # Optional: 720x1280, 1280x720, 1024x1792, 1792x1024
+          seconds = duration      # Optional: 4, 8, or 12 seconds
+        )
       
-      # print(video.id)
+        # print(video.id)
       
-      completed_video = client.videos.retrieve(video.id) 
-      # print(completed_video)
-      while completed_video.status != "completed":
-        completed_video = client.videos.retrieve(video.id)
-        if completed_video.status == "failed":
-          st.error(f"This video can not be created: {completed_video}") # : {completed_video.message}
-          break
+        completed_video = client.videos.retrieve(video.id) 
+        # print(completed_video)
+        while completed_video.status != "completed":
+          completed_video = client.videos.retrieve(video.id)
+          if completed_video.status == "failed":
+            st.error(f"This video can not be created: {completed_video}") # : {completed_video.message}
+            break
         
-      if completed_video.status == "completed":
-        # st.success(completed_video)
-        st.success(f"You can download this video: {video.id}.mp4")
-        video_content = client.videos.download_content(completed_video.id)
-        video_bytes = video_content.read()
-        st.video(video_bytes)
+        if completed_video.status == "completed":
+          # st.success(completed_video)
+          st.success(f"You can download this video: {video.id}.mp4")
+          video_content = client.videos.download_content(completed_video.id)
+          video_bytes = video_content.read()
+          st.video(video_bytes)
+  except Exception as e:
+    st.error(f'An Error happened: {e}')
