@@ -7,7 +7,7 @@ import pandas as pd
 from io import BytesIO
 import requests
 import base64
-from PIL import Image
+# from PIL import Image
 # from gtts import gTTS
 # import pygame
 
@@ -123,8 +123,8 @@ elif selected == 'Image':
           gallery.append(image_bytes)
           # st.success(f"You can find your image at the Galery.")
           
-        image_bytes.seek(0)
-        image = Image.open(image_bytes)
+        # image_bytes.seek(0)
+        # image = Image.open(image_bytes)
           
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
@@ -134,10 +134,10 @@ elif selected == 'Image':
           # else:
           #   st.image(image_bytes)
             
-          st.download_button(label = 'Download Image',
-                             data = image_bytes, # BytesIO(r.content)
-                             file_name = filename,
-                             mime = 'image/png')
+          # st.download_button(label = 'Download Image',
+          #                    data = image_bytes, # BytesIO(r.content)
+          #                    file_name = filename,
+          #                    mime = 'image/png')
           
     except Exception as e:
       st.error(f'An Error happened: {e}')
