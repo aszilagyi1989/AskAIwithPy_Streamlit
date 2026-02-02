@@ -40,8 +40,8 @@ if not st.user.is_logged_in:
   if st.button("Google Login"):
     st.login() # Elindítja az OAuth folyamatot
 else:
-  st.write(f"Hi, {st.user.name}!")
-  st.write(f"E-mail: {st.user.email}")
+  st.write(f"Greetings, {st.user.name}!")
+  # st.write(f"E-mail: {st.user.email}")
     
   if st.button("Logout"):
     st.logout()
@@ -134,10 +134,10 @@ elif selected == 'Image':
           # else:
           #   st.image(image_bytes)
             
-          # st.download_button(label = 'Download Image',
-          #                    data = image_bytes, # BytesIO(r.content)
-          #                    file_name = filename,
-          #                    mime = 'image/png')
+          st.download_button(label = 'Download Image',
+                             data = gallery[-1], # image_bytes, # BytesIO(r.content)
+                             file_name = filename,
+                             mime = 'image/png')
           
     except Exception as e:
       st.error(f'An Error happened: {e}')
