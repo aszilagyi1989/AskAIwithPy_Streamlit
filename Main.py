@@ -24,7 +24,7 @@ def initialization_function2():
 answers = initialization_function()
 gallery = initialization_function2()
 
-mp3_fp = BytesIO()
+# mp3_fp = BytesIO()
 
 st.set_page_config(
   layout = 'wide',
@@ -88,7 +88,7 @@ if selected == 'Chat':
         # pygame.mixer.music.load(mp3_fp, 'mp3')
         # pygame.mixer.music.play()
         
-        # st.download_button(label = 'Download Chat', data = answers.to_csv(index = False).encode('utf-8'), file_name = filename) # ';'.join([model, mquestion, answer])
+        st.download_button(label = 'Download Chat', data = answers.to_csv(index = False, sep = ';').encode('utf-8'), file_name = filename) # ';'.join([model, mquestion, answer])
     except Exception as e:
       st.error(f'An Error happened: {e}')
 
@@ -246,4 +246,4 @@ elif selected == "Video":
           #   data = video_data,
           #   file_name = f"{video.id}.mp4",
           #   mime = "video/mp4")
-          
+
