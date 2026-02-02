@@ -122,7 +122,7 @@ elif selected == 'Image':
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
-          image = Image.open(io.BytesIO(image_bytes))
+          image = Image.open(BytesIO(image_bytes))
           # st.success(f"You can find your image at the Galery.")
           
         
