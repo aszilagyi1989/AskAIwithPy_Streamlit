@@ -28,7 +28,7 @@ def initialization_function3():
     
 answers = initialization_function()
 gallery = initialization_function2()
-videos = initialization_function3()
+video_gallery = initialization_function3()
 
 # mp3_fp = BytesIO()
 
@@ -242,4 +242,4 @@ elif selected == 'Video Gallery':
                           mime = 'video/mp4')
   
     else:
-      st.success("You didn't make any image in this online session still.")
+      st.success("You didn't make any video in this online session still.")
