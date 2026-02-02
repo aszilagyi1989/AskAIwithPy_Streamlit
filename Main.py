@@ -122,7 +122,7 @@ elif selected == 'Image':
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
-          image = Image.open(BytesIO(image_bytes))
+          image = Image.open(image_bytes) # BytesIO(
           # st.success(f"You can find your image at the Galery.")
           
         
@@ -193,7 +193,7 @@ elif selected == "Video":
       if completed_video.status == "completed":
         st.success(f"This video is ready for download: {video.id}.mp4")
         video_content = client.videos.download_content(completed_video.id)
-        video_bytes = response.read()
+        video_bytes = video_content.read()
         st.video(video_bytes)
         # video_url = completed_video.result.url
         # response = requests.get(video_url)
@@ -224,7 +224,7 @@ elif selected == "Video":
           st.success(completed_video)
           st.success(f"This video is ready for download: {video.id}.mp4")
           video_content = client.videos.download_content(completed_video.id)
-          video_bytes = response.read()
+          video_bytes = video_content.read()
           st.video(video_bytes)
           # st.download_button(label = "Videó letöltése", # 🎬 
           #                   data = video_content.read(), # A bináris adatok beolvasása
