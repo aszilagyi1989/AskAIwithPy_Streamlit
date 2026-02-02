@@ -64,8 +64,8 @@ try:
       question TEXT UNIQUE, 
       answer TEXT UNIQUE, 
       date timestamp)"""))
-    st.dataframe(session.query())
-    # session.commit()
+    # st.dataframe(session.query())
+    session.commit()
     # st.success("Table 'chats' created successfully!")
 except Exception as e:
   st.error(f"Error creating table: {e}")
