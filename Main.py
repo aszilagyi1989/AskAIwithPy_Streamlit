@@ -110,20 +110,22 @@ elif selected == 'Image':
           
         now = datetime.now().strftime('%Y%m%d%H%M%S')
         filename = 'image' + now + '.png'
-        
+        image = None
         if model2 == 'dall-e-3':
           link = response.data[0].url
           r = requests.get(link)
           image_bytes = BytesIO(r.content)
           gallery.append(image_bytes) # link
+          image = Image.open(image_bytes)
           # st.success(f"You can find your image at the Galery or on the next link: {link}")
         else:
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
+          image = Image.open(io.BytesIO(image_bytes))
           # st.success(f"You can find your image at the Galery.")
           
-        image = Image.open(image_bytes)
+        
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
           st.image(image) # st.image(image_bytes) # link
