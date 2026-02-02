@@ -20,9 +20,15 @@ def initialization_function():
 def initialization_function2():
   gallery = []
   return gallery
+
+@st.cache_resource
+def initialization_function3():
+  video_gallery = []
+  return video_gallery
     
 answers = initialization_function()
 gallery = initialization_function2()
+videos = initialization_function3()
 
 # mp3_fp = BytesIO()
 
@@ -49,7 +55,7 @@ else:
 
 st.title('Ask AI with Python')
 password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys", key = "my_key") # st.session_state.my_text 
-selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Gallery', 'Video'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
+selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery', 'Video', 'Video Gallery'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
 
 if selected == 'Chat': 
   
@@ -139,7 +145,7 @@ elif selected == 'Image':
     except Exception as e:
       st.error(f'An Error happened: {e}')
   
-elif selected == 'Gallery':
+elif selected == 'Picture Gallery':
   
   left_co, cent_co,last_co = st.columns(3)
   with cent_co:
@@ -174,7 +180,7 @@ elif selected == "Video":
   
   model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-1'])
   duration = st.selectbox('Choose duration:', options = ['4', '8', '12'])
-  # size = st.selectbox('Choose siz:', options = ['1280x720', '720x1280'])
+  # size = st.selectbox('Choose size:', options = ['1280x720', '720x1280'])
   content = st.text_area('Write here your question:', placeholder = 'What about the video?', value = None)
   
   try:
@@ -204,6 +210,36 @@ elif selected == "Video":
           st.success(f"You can download this video: {video.id}.mp4")
           video_content = client.videos.download_content(completed_video.id)
           video_bytes = video_content.read()
+          video_gallery.append(video_bytes)
           st.video(video_bytes)
   except Exception as e:
     st.error(f'An Error happened: {e}')
+
+elif selected == 'Video Gallery':
+  
+  left_co, cent_co,last_co = st.columns(3)
+  with cent_co:
+  
+    if len(video_gallery) == 1:
+      st.video(video_gallery[0])
+      
+      now = datetime.now().strftime('%Y%m%d%H%M%S')
+      filename = 'video' + now + '.mp4'
+      st.download_button(label = 'Download Video',
+                          data = video_gallery[0], # BytesIO(r.content),
+                          file_name = filename,
+                          mime = 'image/png')
+                          
+    elif len(galleryvideo_) > 1:
+      VideoRow = st.slider('Choose video from your actual online gallery:', 0, len(video_gallery) - 1, 0)
+      st.video(video_gallery[VideoRow])
+      
+      now = datetime.now().strftime('%Y%m%d%H%M%S')
+      filename = 'video' + now + '.mp4'
+      st.download_button(label = 'Download Video',
+                          data = video_gallery[VideoRow], # BytesIO(r.content),
+                          file_name = filename,
+                          mime = 'video/mp4')
+  
+    else:
+      st.success("You didn't make any image in this online session still.")
