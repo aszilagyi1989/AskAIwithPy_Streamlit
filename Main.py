@@ -43,7 +43,7 @@ st.set_page_config(
 
 
 if not st.user.is_logged_in:
-  if st.button("Google Login"):
+  if st.button("Login with Google"):
     st.login() # Elindítja az OAuth folyamatot
 else:
   st.write(f"Greetings, {st.user.name}!")

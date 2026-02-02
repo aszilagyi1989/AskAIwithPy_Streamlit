@@ -4,6 +4,8 @@ gtts
 openai
 pandas
 Pillow
+psycopg2-binary
 pygame
+sqlalchemy
 streamlit==1.53.0
 streamlit-option-menu
