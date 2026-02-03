@@ -31,6 +31,15 @@ def databaseConnection():
   conn = st.connection("postgresql", type = "sql")
   return conn
 
+@st.cache_resource
+def amazon():
+  s3 = boto3.client(
+    's3',
+    aws_access_key_id = st.secrets["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key = st.secrets["AWS_SECRET_ACCESS_KEY"]
+  )
+  return s3
+
     
 answers = initialization_function()
 gallery = initialization_function2()
@@ -56,6 +65,7 @@ else:
     st.logout()
 
 conn = databaseConnection()
+s3 = amazon()
 
 try:
   with conn.session as session:
@@ -169,8 +179,17 @@ elif selected == 'Image':
           
         if st.user.is_logged_in:
           try:
+            s3.put_object(
+              Bucket = 'askaiwithpy', 
+              Key = filename, 
+              Body = image_bytes.getvalue()
+          )
+          except NoCredentialsError:
+            st.error(f"Hiba történt: {e}")
+            
+          try:
             with conn.session as session:
-              session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": image_bytes.getvalue()})
+              session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{filename}")
               session.commit()
           except Exception as e:
             st.error(f"Hiba történt: {e}")
@@ -194,7 +213,9 @@ elif selected == 'Image':
 elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
-    pass
+    df = conn.query("SELECT image FROM images", ttl = None)
+    if len(df) >= 0:
+      st.image(df[0])
     # df = get_images()
     # if len(df) >= 0:
     #   # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
