@@ -56,6 +56,7 @@ st.set_page_config(
 
 
 if not st.user.is_logged_in:
+  st.info("If you have got an OpenAI API Key, then after sign in with Google you can use this webapplication to chat with AI models and create AI photos and videos. All your data is saved into database tables and your photos and videos are stored on Amazon.")
   if st.button("Login with Google"):
     st.login() # Elindítja az OAuth folyamatot
   st.stop()
