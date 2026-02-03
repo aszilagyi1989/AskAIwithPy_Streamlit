@@ -30,6 +30,7 @@ def databaseConnection():
   conn = st.connection("postgresql", type = "sql")
   return conn
 
+@st.cache_resource
 def get_raw_data():
     return conn.query("SELECT image FROM images", ttl = None)
   
