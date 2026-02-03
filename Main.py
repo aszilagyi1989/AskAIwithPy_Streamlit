@@ -27,7 +27,7 @@ def initialization_function3():
 
 conn = st.connection("postgresql", type = "sql")
 
-@st.cache_data
+@st.cache_resource
 def get_images():
   df = conn.query("SELECT image FROM images", ttl = None)
   df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
