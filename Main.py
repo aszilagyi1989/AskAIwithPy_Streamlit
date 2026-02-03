@@ -213,14 +213,42 @@ elif selected == 'Image':
   
 elif selected == 'Picture Gallery':
   
+  left_co, cent_co,last_co = st.columns(3)
+  
   if st.user.is_logged_in:
     df = conn.query("SELECT * FROM images", ttl = None)
+    st.dataframe(df)
     st.success(len(df))
-    if len(df) >= 0:
-      st.image(df['image'].iloc[0])
+    
+    with cent_co:
+    
+      if len(df) == 1:
+        st.image(df['image'].iloc[0])
+        
+        now = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = 'image' + now + '.png'
+        # r = requests.get(gallery[0])
+        st.download_button(label = 'Download Image',
+                            data = df['image'].iloc[0], # BytesIO(r.content),
+                            file_name = df['image'].iloc[PictureRow][-23:],
+                            mime = 'image/png')
+                            
+      elif len(df) > 1:
+        PictureRow = st.slider('Choose picture from your online gallery:', 0, len(df) - 1, 0)
+        st.image(df[PictureRow])
+        
+        now = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = 'image' + now + '.png'
+        # r = requests.get(gallery[PictureRow])
+        st.download_button(label = 'Download Image',
+                            data = df['image'].iloc[PictureRow], # BytesIO(r.content),
+                            file_name = df['image'].iloc[PictureRow][-23:],
+                            mime = 'image/png')
+    
+      else:
+        st.success("You didn't make any image still.")
     # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
   else:
-    left_co, cent_co,last_co = st.columns(3)
     with cent_co:
     
       if len(gallery) == 1:
