@@ -53,14 +53,16 @@ conn = st.connection("postgresql", type = "sql")
 
 try:
   with conn.session as session:
-    session.execute(text("DROP TABLE IF EXISTS chats"))
-    session.commit()
+    # session.execute(text("DROP TABLE IF EXISTS chats"))
+    # session.commit()
+    # 
+    # session.execute(text("DROP TABLE IF EXISTS images"))
+    # session.commit()
+    # 
+    # session.execute(text("DROP TABLE IF EXISTS videos"))
+    # session.commit()
     
-    session.execute(text("DROP TABLE IF EXISTS images"))
-    session.commit()
-    
-    session.execute(text("DROP TABLE IF EXISTS videos"))
-    session.commit()
+    # Modern megközelítés: Professzionális alkalmazásoknál gyakran csak a kép URL-jét tárolják az adatbázisban, maga a fájl pedig egy felhőtárhelyen (pl. AWS S3, Cloudinary) van. Ha azonban csak egy kisebb projektről vagy prototípusról van szó, a BYTEA a legegyszerűbb út.
         
     session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
       id SERIAL PRIMARY KEY, 
@@ -189,7 +191,8 @@ elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
     df = conn.query("SELECT image FROM images", ttl = "10m")
-    st.image(df[0])
+    if nrow(df) >= 0:
+      st.image(df[0])
     # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
     # element = st.dataframe(df, hide_index = True)
   else:
