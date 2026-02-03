@@ -192,6 +192,7 @@ elif selected == 'Picture Gallery':
   if st.user.is_logged_in:
     df = conn.query("SELECT image FROM images", ttl = None) # "10m"
     if len(df) >= 0:
+      df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
       st.image(df[0])
     # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
     # element = st.dataframe(df, hide_index = True)
