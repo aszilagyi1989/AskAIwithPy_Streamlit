@@ -9,7 +9,7 @@ import requests
 import base64
 from sqlalchemy import text
 import boto3
-# from PIL import Image
+from botocore.exceptions import NoCredentialsError
 
 @st.cache_resource
 def initialization_function():
@@ -31,23 +31,6 @@ def databaseConnection():
   conn = st.connection("postgresql", type = "sql")
   return conn
 
-# @st.cache_data # _resource
-# def get_raw_data():
-#     return conn.query("SELECT image FROM images", ttl = None)
-#   
-# @st.cache_data(ttl = None) 
-# def get_images():
-#   df_raw = get_raw_data()
-#   df = pd.DataFrame(df_raw).copy()
-#   def to_base64(x):
-#         try:
-#             return base64.b64encode(x).decode('utf-8')
-#         except Exception:
-#             return None
-# 
-#   df['image'] = df['image'].apply(to_base64)
-#   # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
-#   return df
     
 answers = initialization_function()
 gallery = initialization_function2()
@@ -68,7 +51,6 @@ if not st.user.is_logged_in:
     st.login() # Elindítja az OAuth folyamatot
 else:
   st.write(f"Greetings, {st.user.name}!")
-  # st.write(f"E-mail: {st.user.email}")
     
   if st.button("Logout"):
     st.logout()
@@ -80,13 +62,11 @@ try:
     # session.execute(text("DROP TABLE IF EXISTS chats"))
     # session.commit()
     # 
-    session.execute(text("DROP TABLE IF EXISTS images"))
-    session.commit()
-
-    session.execute(text("DROP TABLE IF EXISTS videos"))
-    session.commit()
-    
-    # Modern megközelítés: Professzionális alkalmazásoknál gyakran csak a kép URL-jét tárolják az adatbázisban, maga a fájl pedig egy felhőtárhelyen (pl. AWS S3, Cloudinary) van. Ha azonban csak egy kisebb projektről vagy prototípusról van szó, a BYTEA a legegyszerűbb út.
+    # session.execute(text("DROP TABLE IF EXISTS images"))
+    # session.commit()
+    # 
+    # session.execute(text("DROP TABLE IF EXISTS videos"))
+    # session.commit()
         
     session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
       id SERIAL PRIMARY KEY, 
@@ -214,10 +194,11 @@ elif selected == 'Image':
 elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
-    df = get_images()
-    if len(df) >= 0:
-      # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
-      st.image(df[0])
+    pass
+    # df = get_images()
+    # if len(df) >= 0:
+    #   # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
+    #   st.image(df[0])
     # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
     # element = st.dataframe(df, hide_index = True)
   else:
