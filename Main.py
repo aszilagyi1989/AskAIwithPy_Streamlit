@@ -114,7 +114,6 @@ if selected == 'Chat':
             with conn.session as session:
               session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date)"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
               session.commit()
-              # st.success("Adatok sikeresen elmentve!")
           except Exception as e:
             st.error(f"Hiba történt: {e}")
         
