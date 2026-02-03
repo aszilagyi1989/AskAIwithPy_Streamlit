@@ -224,8 +224,12 @@ elif selected == 'Picture Gallery':
       if len(df) == 1:
         
         st.image(df['image'].iloc[0])
+        
+        response = requests.get(df['image'].iloc[0])
+        image_bytes = response.content
+        
         st.download_button(label = 'Download Image',
-                            data = df['image'].iloc[0], # BytesIO(r.content),
+                            data = image_bytes,
                             file_name = df['image'].iloc[0][-23:],
                             mime = 'image/png')
                             
@@ -334,28 +338,63 @@ elif selected == "Video":
 elif selected == 'Video Gallery':
   
   left_co, cent_co,last_co = st.columns(3)
-  with cent_co:
   
-    if len(video_gallery) == 1:
-      st.video(video_gallery[0])
-      
-      now = datetime.now().strftime('%Y%m%d%H%M%S')
-      filename = 'video' + now + '.mp4'
-      st.download_button(label = 'Download Video',
-                          data = video_gallery[0], # BytesIO(r.content),
-                          file_name = filename,
-                          mime = 'image/png')
-                          
-    elif len(video_gallery) > 1:
-      VideoRow = st.slider('Choose video from your actual online gallery:', 0, len(video_gallery) - 1, 0)
-      st.video(video_gallery[VideoRow])
-      
-      now = datetime.now().strftime('%Y%m%d%H%M%S')
-      filename = 'video' + now + '.mp4'
-      st.download_button(label = 'Download Video',
-                          data = video_gallery[VideoRow], # BytesIO(r.content),
-                          file_name = filename,
-                          mime = 'video/mp4')
-  
-    else:
-      st.success("You didn't make any video in this online session still.")
+  if st.user.is_logged_in:
+    df = conn.query("SELECT * FROM videos", ttl = 0)
+    
+    with cent_co:
+    
+      if len(df) == 1:
+        
+        st.video(df['video'].iloc[0])
+        
+        response = requests.get(df['video'].iloc[0])
+        image_bytes = response.content
+        str(df['video'].iloc[0]).split("_")[1]
+        st.download_button(label = 'Download Video',
+                            data = image_bytes, # BytesIO(r.content),
+                            file_name = f"video_{str(df['video'].iloc[0]).split("_")[1]}",
+                            mime = 'video/mp4')
+                            
+      elif len(df) > 1:
+        
+        PictureRow = st.slider('Choose video from your gallery:', 0, len(df) - 1, 0)
+        st.video(df['video'].iloc[PictureRow])
+        
+        response = requests.get(df['video'].iloc[PictureRow])
+        image_bytes = response.content
+
+        st.download_button(label = 'Download Video',
+                            data = image_bytes,
+                            file_name = f"video_{str(df['video'].iloc[PictureRow]).split("_")[1]}",
+                            mime = 'video/mp4')
+    
+      else:
+        st.success("You didn't make any video still.")
+
+  else:
+    with cent_co:
+    
+      if len(video_gallery) == 1:
+        st.video(video_gallery[0])
+        
+        now = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = 'video' + now + '.mp4'
+        st.download_button(label = 'Download Video',
+                            data = video_gallery[0], # BytesIO(r.content),
+                            file_name = filename,
+                            mime = 'image/png')
+                            
+      elif len(video_gallery) > 1:
+        VideoRow = st.slider('Choose video from your actual online gallery:', 0, len(video_gallery) - 1, 0)
+        st.video(video_gallery[VideoRow])
+        
+        now = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = 'video' + now + '.mp4'
+        st.download_button(label = 'Download Video',
+                            data = video_gallery[VideoRow], # BytesIO(r.content),
+                            file_name = filename,
+                            mime = 'video/mp4')
+    
+      else:
+        st.success("You didn't make any video in this online session still.")
