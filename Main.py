@@ -218,8 +218,6 @@ elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
     df = conn.query("SELECT * FROM images", ttl = 0)
-    st.dataframe(df)
-    st.success(len(df))
     
     with cent_co:
     
@@ -236,7 +234,7 @@ elif selected == 'Picture Gallery':
                             
       elif len(df) > 1:
         PictureRow = st.slider('Choose picture from your gallery:', 0, len(df) - 1, 0)
-        st.image(df[PictureRow])
+        st.image(df['image'].iloc[PictureRow])
         
         now = datetime.now().strftime('%Y%m%d%H%M%S')
         filename = 'image' + now + '.png'
@@ -248,7 +246,7 @@ elif selected == 'Picture Gallery':
     
       else:
         st.success("You didn't make any image still.")
-    # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
+
   else:
     with cent_co:
     
