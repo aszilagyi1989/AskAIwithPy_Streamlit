@@ -56,10 +56,10 @@ st.set_page_config(
 
 
 if not st.user.is_logged_in:
-  st.info("If you have got an OpenAI API Key, then after sign in with Google you can use this webapplication with different AI models to chat and create photos and videos.")
+  st.info("If you have got an OpenAI API Key, then after sign in with Google you can use this web application with different AI models to chat and create photos and videos.")
   st.info("You can buy credits here: https://platform.openai.com/settings/organization/billing/overview")
-  st.info("Your email address and generated data like question, description and content are saved into PostgreSQL database tables")
-  st.info("Your AI generated photos and videos are stored on Amazon phisically.")
+  st.info("Your email address and other data like your questions and descriptions are saved into PostgreSQL database tables.")
+  st.info("Your AI generated photos and videos are stored on Amazon locally.")
   if st.button("Login with Google"):
     st.login() # Elindítja az OAuth folyamatot
   st.stop()
