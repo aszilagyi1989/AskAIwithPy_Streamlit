@@ -176,6 +176,7 @@ elif selected == 'Image':
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
+          image_bytes = io.BytesIO(image_bytes)
           
         if st.user.is_logged_in:
           try:
@@ -290,7 +291,7 @@ elif selected == "Video":
               s3.put_object(
                 Bucket = 'askaiwithpy', 
                 Key = f"{video.id}", 
-                Body = video_bytes.getvalue()
+                Body = video_bytes # .getvalue()
             )
             except NoCredentialsError:
               st.error(f"Hiba történt a videó feltöltése során: {e}")
