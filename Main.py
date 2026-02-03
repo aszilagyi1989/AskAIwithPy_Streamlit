@@ -213,7 +213,7 @@ elif selected == 'Image':
 elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
-    df = conn.query("SELECT image FROM images", ttl = None)
+    df = conn.query("SELECT * FROM images", ttl = None)
     st.dataframe(df)
     if len(df) >= 0:
       st.image(df[0])
