@@ -8,6 +8,7 @@ from io import BytesIO
 import requests
 import base64
 from sqlalchemy import text
+import boto3
 # from PIL import Image
 
 @st.cache_resource
@@ -30,23 +31,23 @@ def databaseConnection():
   conn = st.connection("postgresql", type = "sql")
   return conn
 
-@st.cache_data # _resource
-def get_raw_data():
-    return conn.query("SELECT image FROM images", ttl = None)
-  
-@st.cache_data(ttl = None) 
-def get_images():
-  df_raw = get_raw_data()
-  df = pd.DataFrame(df_raw).copy()
-  def to_base64(x):
-        try:
-            return base64.b64encode(x).decode('utf-8')
-        except Exception:
-            return None
-
-  df['image'] = df['image'].apply(to_base64)
-  # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
-  return df
+# @st.cache_data # _resource
+# def get_raw_data():
+#     return conn.query("SELECT image FROM images", ttl = None)
+#   
+# @st.cache_data(ttl = None) 
+# def get_images():
+#   df_raw = get_raw_data()
+#   df = pd.DataFrame(df_raw).copy()
+#   def to_base64(x):
+#         try:
+#             return base64.b64encode(x).decode('utf-8')
+#         except Exception:
+#             return None
+# 
+#   df['image'] = df['image'].apply(to_base64)
+#   # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
+#   return df
     
 answers = initialization_function()
 gallery = initialization_function2()
@@ -79,11 +80,11 @@ try:
     # session.execute(text("DROP TABLE IF EXISTS chats"))
     # session.commit()
     # 
-    # session.execute(text("DROP TABLE IF EXISTS images"))
-    # session.commit()
-    # 
-    # session.execute(text("DROP TABLE IF EXISTS videos"))
-    # session.commit()
+    session.execute(text("DROP TABLE IF EXISTS images"))
+    session.commit()
+
+    session.execute(text("DROP TABLE IF EXISTS videos"))
+    session.commit()
     
     # Modern megközelítés: Professzionális alkalmazásoknál gyakran csak a kép URL-jét tárolják az adatbázisban, maga a fájl pedig egy felhőtárhelyen (pl. AWS S3, Cloudinary) van. Ha azonban csak egy kisebb projektről vagy prototípusról van szó, a BYTEA a legegyszerűbb út.
         
@@ -101,7 +102,7 @@ try:
       email TEXT, 
       model VARCHAR(30), 
       description TEXT, 
-      image BYTEA, 
+      image TEXT, 
       date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
     session.commit()
     
@@ -110,7 +111,7 @@ try:
       email TEXT, 
       model VARCHAR(30), 
       content TEXT, 
-      video BYTEA, 
+      video TEXT, 
       date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
     session.commit()
     
