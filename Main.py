@@ -9,8 +9,6 @@ import requests
 import base64
 from sqlalchemy import text
 # from PIL import Image
-# from gtts import gTTS
-# import pygame
 
 @st.cache_resource
 def initialization_function():
@@ -30,8 +28,6 @@ def initialization_function3():
 answers = initialization_function()
 gallery = initialization_function2()
 video_gallery = initialization_function3()
-
-# mp3_fp = BytesIO()
 
 st.set_page_config(
   layout = 'wide',
@@ -92,24 +88,14 @@ if selected == 'Chat':
         filename = 'Chat' + now + '.txt'
         answers.loc[len(answers)] = [model, question, answer]
         
-        # response = client.chat.completions.create(
-        #   model = model,
-        #   messages = [
-        #     {"role": "system", "content": "You are a language detection assistant. Return only the ISO 639-1 language code (e.g., 'en', 'es', 'fr') for the provided text. Do not provide any other text."},
-        #     {"role": "user", "content": question}
-        #   ],
-        #   temperature = 0 # Low temperature for consistent, factual results
-        # )
-        # language = response.choices[0].message.content.strip()
-        # 
-        # tts = gTTS(text = answer, lang = language) # , lang = 'en' # answers['Answer'].iloc[-1]
-        # tts.write_to_fp(mp3_fp)
-        # 
-        # mp3_fp.seek(0)
-        # 
-        # pygame.mixer.init()
-        # pygame.mixer.music.load(mp3_fp, 'mp3')
-        # pygame.mixer.music.play()
+        if st.user.is_logged_in:
+          try:
+            with conn.session as session:
+              session.execute("INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date);", {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
+              session.commit()
+              # st.success("Adatok sikeresen elmentve!")
+          except Exception as e:
+            st.error(f"Hiba történt: {e}")
         
         st.download_button(label = 'Download Chat', data = answers.to_csv(index = False, sep = ';').encode('utf-8'), file_name = filename) # ';'.join([model, mquestion, answer])
     except Exception as e:
