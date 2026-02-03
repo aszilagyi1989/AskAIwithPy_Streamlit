@@ -49,9 +49,9 @@ st.set_page_config(
   layout = 'wide',
   page_title = 'Ask AI with Python',
   page_icon = 'ikon.png', # https://map.ksh.hu/timea/images/shortcut.ico
-  menu_items = {'Get help': 'mailto:adam.szilagyi@ksh.hu',
-                'Report a bug': 'mailto:adam.szilagyi@ksh.hu',
-                'About': 'This webapplication makes you able to chat and generate picture with ChatGPT through OpenAI module.'}
+  menu_items = {'Get help': 'mailto:sz.adam1989@gmail.com',
+                'Report a bug': 'mailto:sz.adam1989@gmail.com',
+                'About': 'This web application makes you able to chat and generate pictures and videos with ChatGPT through OpenAI module.'}
   )
 
 
