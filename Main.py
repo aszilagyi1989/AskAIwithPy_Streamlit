@@ -25,11 +25,13 @@ def initialization_function3():
   video_gallery = []
   return video_gallery
 
-conn = st.connection("postgresql", type = "sql")
+@st.cache_resource
+def databaseConnection():
+  conn = st.connection("postgresql", type = "sql")
 
 @st.cache_data(ttl = None) 
 def get_images():
-  df = conn.query("SELECT image FROM images", ttl = None)
+  df = conn.query("SELECT image FROM images", ttl = None).copy()
   df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
   return df
     
@@ -56,6 +58,8 @@ else:
     
   if st.button("Logout"):
     st.logout()
+
+conn = databaseConnection()
 
 try:
   with conn.session as session:
