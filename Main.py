@@ -350,10 +350,9 @@ elif selected == 'Video Gallery':
         
         response = requests.get(df['video'].iloc[0])
         image_bytes = response.content
-        str(df['video'].iloc[0]).split("_")[1]
         st.download_button(label = 'Download Video',
-                            data = image_bytes, # BytesIO(r.content),
-                            file_name = f"video_{str(df['video'].iloc[0]).split("_")[1]}",
+                            data = image_bytes,
+                            file_name = f"video_{str(df['video'].iloc[0]).split("_")[1]}.mp4",
                             mime = 'video/mp4')
                             
       elif len(df) > 1:
@@ -366,7 +365,7 @@ elif selected == 'Video Gallery':
 
         st.download_button(label = 'Download Video',
                             data = image_bytes,
-                            file_name = f"video_{str(df['video'].iloc[PictureRow]).split("_")[1]}",
+                            file_name = f"video_{str(df['video'].iloc[PictureRow]).split("_")[1]}.mp4",
                             mime = 'video/mp4')
     
       else:
