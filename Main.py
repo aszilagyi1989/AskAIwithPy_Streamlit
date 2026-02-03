@@ -25,9 +25,10 @@ def initialization_function3():
   video_gallery = []
   return video_gallery
 
+conn = st.connection("postgresql", type = "sql")
+
 @st.cache_resource
 def get_images():
-  conn = st.connection("sql")
   return conn.query("SELECT image FROM images", ttl = None)
     
 answers = initialization_function()
@@ -53,8 +54,6 @@ else:
     
   if st.button("Logout"):
     st.logout()
-
-conn = st.connection("postgresql", type = "sql")
 
 try:
   with conn.session as session:
