@@ -286,21 +286,21 @@ elif selected == "Video":
           st.video(video_bytes)
           
           if st.user.is_logged_in:
-          try:
-            s3.put_object(
-              Bucket = 'askaiwithpy', 
-              Key = f"{video.id}", 
-              Body = video_bytes.getvalue()
-          )
-          except NoCredentialsError:
-            st.error(f"Hiba történt a videó feltöltése során: {e}")
-            
-          try:
-            with conn.session as session:
-              session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{video.id}"})
-              session.commit()
-          except Exception as e:
-            st.error(f"Hiba történt a videó linkjének mentése közben: {e}")
+            try:
+              s3.put_object(
+                Bucket = 'askaiwithpy', 
+                Key = f"{video.id}", 
+                Body = video_bytes.getvalue()
+            )
+            except NoCredentialsError:
+              st.error(f"Hiba történt a videó feltöltése során: {e}")
+              
+            try:
+              with conn.session as session:
+                session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{video.id}"})
+                session.commit()
+            except Exception as e:
+              st.error(f"Hiba történt a videó linkjének mentése közben: {e}")
               
   except Exception as e:
     st.error(f'An Error happened: {e}')
