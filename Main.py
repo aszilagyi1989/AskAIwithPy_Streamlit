@@ -185,7 +185,7 @@ elif selected == 'Image':
               Body = image_bytes.getvalue()
           )
           except NoCredentialsError:
-            st.error(f"Hiba történt: {e}")
+            st.error(f"Hiba történt a kép feltöltése során: {e}")
             
           try:
             with conn.session as session:
@@ -214,16 +214,10 @@ elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
     df = conn.query("SELECT * FROM images", ttl = None)
-    # st.dataframe(df)
     st.success(len(df))
     if len(df) >= 0:
       st.image(df['image'].iloc[0])
-    # df = get_images()
-    # if len(df) >= 0:
-    #   # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
-    #   st.image(df[0])
     # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
-    # element = st.dataframe(df, hide_index = True)
   else:
     left_co, cent_co,last_co = st.columns(3)
     with cent_co:
@@ -292,12 +286,21 @@ elif selected == "Video":
           st.video(video_bytes)
           
           if st.user.is_logged_in:
-            try:
-              with conn.session as session:
-                session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": video_bytes.getvalue()})
-                session.commit()
-            except Exception as e:
-              st.error(f"Hiba történt: {e}")
+          try:
+            s3.put_object(
+              Bucket = 'askaiwithpy', 
+              Key = f"{video.id}", 
+              Body = video_bytes.getvalue()
+          )
+          except NoCredentialsError:
+            st.error(f"Hiba történt a videó feltöltése során: {e}")
+            
+          try:
+            with conn.session as session:
+              session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{video.id}"})
+              session.commit()
+          except Exception as e:
+            st.error(f"Hiba történt a videó linkjének mentése közben: {e}")
               
   except Exception as e:
     st.error(f'An Error happened: {e}')
