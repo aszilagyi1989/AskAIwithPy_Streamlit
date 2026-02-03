@@ -32,7 +32,8 @@ def databaseConnection():
 
 @st.cache_data(ttl = None) 
 def get_images():
-  df = conn.query("SELECT image FROM images", ttl = None).copy()
+  df_raw = conn.query("SELECT image FROM images", ttl = None)
+  df = pd.DataFrame(df_raw).copy()
   def to_base64(x):
         try:
             return base64.b64encode(x).decode('utf-8')
