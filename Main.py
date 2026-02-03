@@ -214,9 +214,10 @@ elif selected == 'Picture Gallery':
   
   if st.user.is_logged_in:
     df = conn.query("SELECT * FROM images", ttl = None)
-    st.dataframe(df)
+    # st.dataframe(df)
+    st.success(len(df))
     if len(df) >= 0:
-      st.image(df[0])
+      st.image(df['image'].iloc[0])
     # df = get_images()
     # if len(df) >= 0:
     #   # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
