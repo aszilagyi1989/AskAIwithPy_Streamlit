@@ -91,7 +91,7 @@ if selected == 'Chat':
         if st.user.is_logged_in:
           try:
             with conn.session as session:
-              session.execute("INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date);", {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
+              session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date)"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
               session.commit()
               # st.success("Adatok sikeresen elmentve!")
           except Exception as e:
