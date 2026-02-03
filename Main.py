@@ -125,6 +125,7 @@ if selected == 'Chat':
 elif selected == 'Messages':
   if st.user.is_logged_in:
     df = conn.query("SELECT model, question, answer FROM chats", ttl = "10m")
+    # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
     element = st.dataframe(df, hide_index = True)
   else:
     element = st.dataframe(answers, hide_index = True) # st.session_state.df
