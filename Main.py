@@ -53,7 +53,7 @@ conn = st.connection("postgresql", type = "sql")
 
 try:
   with conn.session as session:
-    # session.execute(text("DROP TABLE IF EXISTS chats;"))
+    # session.execute(text("DROP TABLE IF EXISTS chats"))
     # session.commit()
         
     session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
@@ -62,7 +62,7 @@ try:
       model VARCHAR(30), 
       question TEXT, 
       answer TEXT, 
-      date timestamp);"""))
+      date timestamp)"""))
     session.commit()
     
     session.execute(text("""CREATE TABLE IF NOT EXISTS images (
@@ -71,7 +71,7 @@ try:
       model VARCHAR(30), 
       description TEXT, 
       image BYTEA, 
-      date timestamp);"""))
+      date timestamp)"""))
     session.commit()
     
     session.execute(text("""CREATE TABLE IF NOT EXISTS videos (
@@ -80,7 +80,7 @@ try:
       model VARCHAR(30), 
       content TEXT, 
       video BYTEA, 
-      date timestamp);"""))
+      date timestamp)"""))
     session.commit()
     
     
@@ -112,7 +112,7 @@ if selected == 'Chat':
         if st.user.is_logged_in:
           try:
             with conn.session as session:
-              session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date);"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
+              session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date)"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
               session.commit()
               # st.success("Adatok sikeresen elmentve!")
           except Exception as e:
@@ -124,7 +124,7 @@ if selected == 'Chat':
 
 elif selected == 'Messages':
   if st.user.is_logged_in:
-    df = conn.query(text("""SELECT model, question, answer FROM chats;"""), ttl = "10m")
+    df = conn.query(text("""SELECT model, question, answer FROM chats"""), ttl = "10m")
     element = st.dataframe(df, hide_index = True)
   else:
     element = st.dataframe(answers, hide_index = True) # st.session_state.df
