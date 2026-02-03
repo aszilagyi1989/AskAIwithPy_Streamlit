@@ -110,7 +110,7 @@ try:
 except Exception as e:
   st.error(f"Error creating table: {e}")
     
-st.title('Ask AI with Python')
+st.title('Ask AI with Python', anchor = False, help = None)
 password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys", key = "my_key") # st.session_state.my_text 
 selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery', 'Video', 'Video Gallery'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
 
