@@ -155,6 +155,14 @@ elif selected == 'Image':
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
           
+        if st.user.is_logged_in:
+          try:
+            with conn.session as session:
+              session.execute(text("""INSERT INTO images(email, model, description, image, date) VALUES (:email, :model, :description, :image, :date)"""), {"email": st.user.email, "model": model2, "description": description, "image": image_bytes, "date": datetime.now()})
+              session.commit()
+          except Exception as e:
+            st.error(f"Hiba történt: {e}")
+          
         # image_bytes.seek(0)
         # image = Image.open(image_bytes)
           
@@ -238,6 +246,15 @@ elif selected == "Video":
           video_bytes = video_content.read()
           video_gallery.append(video_bytes)
           st.video(video_bytes)
+          
+          if st.user.is_logged_in:
+            try:
+              with conn.session as session:
+                session.execute(text("""INSERT INTO videos(email, model, content, video, date) VALUES (:email, :model, :content, :video, :date)"""), {"email": st.user.email, "model": model3, "content": content, "video": video_bytes, "date": datetime.now()})
+                session.commit()
+            except Exception as e:
+              st.error(f"Hiba történt: {e}")
+              
   except Exception as e:
     st.error(f'An Error happened: {e}')
 
