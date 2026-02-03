@@ -29,7 +29,9 @@ conn = st.connection("postgresql", type = "sql")
 
 @st.cache_data
 def get_images():
-  return conn.query("SELECT image FROM images", ttl = None)
+  df = conn.query("SELECT image FROM images", ttl = None)
+  df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
+  return df
     
 answers = initialization_function()
 gallery = initialization_function2()
