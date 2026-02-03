@@ -33,7 +33,14 @@ def databaseConnection():
 @st.cache_data(ttl = None) 
 def get_images():
   df = conn.query("SELECT image FROM images", ttl = None).copy()
-  df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
+  def to_base64(x):
+        try:
+            return base64.b64encode(x).decode('utf-8')
+        except Exception:
+            return None
+
+  df['image'] = df['image'].apply(to_base64)
+  # df['image'] = df['image'].apply(lambda x: base64.b64encode(x).decode() if x else None)
   return df
     
 answers = initialization_function()
