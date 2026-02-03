@@ -53,16 +53,37 @@ conn = st.connection("postgresql", type = "sql")
 
 try:
   with conn.session as session:
+    session.execute(text(f"DROP TABLE IF EXISTS chats;"))
+    session.commit()
+        
     session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
       id SERIAL PRIMARY KEY, 
-      email TEXT UNIQUE, 
+      email TEXT, 
       model VARCHAR(30), 
-      question TEXT UNIQUE, 
-      answer TEXT UNIQUE, 
-      date timestamp)"""))
-    # st.dataframe(session.query())
+      question TEXT, 
+      answer TEXT, 
+      date timestamp);"""))
     session.commit()
-    # st.success("Table 'chats' created successfully!")
+    
+    session.execute(text("""CREATE TABLE IF NOT EXISTS images (
+      id SERIAL PRIMARY KEY, 
+      email TEXT, 
+      model VARCHAR(30), 
+      description TEXT, 
+      image BYTEA, 
+      date timestamp);"""))
+    session.commit()
+    
+    session.execute(text("""CREATE TABLE IF NOT EXISTS videos (
+      id SERIAL PRIMARY KEY, 
+      email TEXT, 
+      model VARCHAR(30), 
+      content TEXT, 
+      video BYTEA, 
+      date timestamp);"""))
+    session.commit()
+    
+    
 except Exception as e:
   st.error(f"Error creating table: {e}")
     
@@ -91,7 +112,7 @@ if selected == 'Chat':
         if st.user.is_logged_in:
           try:
             with conn.session as session:
-              session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date)"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
+              session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date);"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
               session.commit()
               # st.success("Adatok sikeresen elmentve!")
           except Exception as e:
@@ -103,22 +124,22 @@ if selected == 'Chat':
 
 elif selected == 'Messages':
   if st.user.is_logged_in:
-    df = conn.query('SELECT model, question, answer FROM chats;', ttl = "10m")
-    element = st.dataframe(df, hide_index = True) # st.dataframe(df)
+    df = conn.query(text("""SELECT model, question, answer FROM chats;"""), ttl = "10m")
+    element = st.dataframe(df, hide_index = True)
   else:
     element = st.dataframe(answers, hide_index = True) # st.session_state.df
 
 elif selected == 'Image':
   
   model2 = st.selectbox('Choose AI Model:', options = ['dall-e-3', 'chatgpt-image-latest', 'gpt-image-1.5', 'gpt-image-1', 'gpt-image-1-mini']) #  'gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'chatgpt-image-latest', 'dall-e-2', and 'dall-e-3'.
-  desciption = st.text_area('What should the picture depict?', placeholder = 'Describe here...')
+  description = st.text_area('What should the picture depict?', placeholder = 'Describe here...')
   if st.button('Draw me!'):
     try:
       with st.spinner('In progress...'):
         client = OpenAI(api_key = password)
         response = client.images.generate(
           model = model2, 
-          prompt = desciption, 
+          prompt = description, 
         )
           
         now = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -129,12 +150,10 @@ elif selected == 'Image':
           r = requests.get(link)
           image_bytes = BytesIO(r.content)
           gallery.append(image_bytes) # link
-          # st.success(f"You can find your image at the Galery or on the next link: {link}")
         else:
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
-          # st.success(f"You can find your image at the Galery.")
           
         # image_bytes.seek(0)
         # image = Image.open(image_bytes)
@@ -188,7 +207,7 @@ elif selected == "Video":
   model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-1'])
   duration = st.selectbox('Choose duration:', options = ['4', '8', '12'])
   # size = st.selectbox('Choose size:', options = ['1280x720', '720x1280'])
-  content = st.text_area('Write here your question:', placeholder = 'What about the video?', value = None)
+  content = st.text_area('Write here the story of the video:', placeholder = 'Story of the video?', value = None)
   
   try:
     if st.button('Shoot me!'):
