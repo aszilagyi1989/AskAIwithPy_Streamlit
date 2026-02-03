@@ -28,6 +28,7 @@ def initialization_function3():
 @st.cache_resource
 def databaseConnection():
   conn = st.connection("postgresql", type = "sql")
+  return conn
 
 @st.cache_data(ttl = None) 
 def get_images():
