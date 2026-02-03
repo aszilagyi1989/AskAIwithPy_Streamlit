@@ -53,8 +53,14 @@ conn = st.connection("postgresql", type = "sql")
 
 try:
   with conn.session as session:
-    # session.execute(text("DROP TABLE IF EXISTS chats"))
-    # session.commit()
+    session.execute(text("DROP TABLE IF EXISTS chats"))
+    session.commit()
+    
+    session.execute(text("DROP TABLE IF EXISTS images"))
+    session.commit()
+    
+    session.execute(text("DROP TABLE IF EXISTS videos"))
+    session.commit()
         
     session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
       id SERIAL PRIMARY KEY, 
@@ -62,7 +68,7 @@ try:
       model VARCHAR(30), 
       question TEXT, 
       answer TEXT, 
-      date timestamp)"""))
+      date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
     session.commit()
     
     session.execute(text("""CREATE TABLE IF NOT EXISTS images (
@@ -71,7 +77,7 @@ try:
       model VARCHAR(30), 
       description TEXT, 
       image BYTEA, 
-      date timestamp)"""))
+      date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
     session.commit()
     
     session.execute(text("""CREATE TABLE IF NOT EXISTS videos (
@@ -80,7 +86,7 @@ try:
       model VARCHAR(30), 
       content TEXT, 
       video BYTEA, 
-      date timestamp)"""))
+      date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
     session.commit()
     
     
@@ -112,7 +118,7 @@ if selected == 'Chat':
         if st.user.is_logged_in:
           try:
             with conn.session as session:
-              session.execute(text("""INSERT INTO chats(email, model, question, answer, date) VALUES (:email, :model, :question, :answer, :date)"""), {"email": st.user.email, "model": model, "question": question, "answer": answer, "date": datetime.now()})
+              session.execute(text("""INSERT INTO chats(email, model, question, answer) VALUES (:email, :model, :question, :answer)"""), {"email": st.user.email, "model": model, "question": question, "answer": answer})
               session.commit()
           except Exception as e:
             st.error(f"Hiba történt: {e}")
@@ -158,7 +164,7 @@ elif selected == 'Image':
         if st.user.is_logged_in:
           try:
             with conn.session as session:
-              session.execute(text("""INSERT INTO images(email, model, description, image, date) VALUES (:email, :model, :description, :image, :date)"""), {"email": st.user.email, "model": model2, "description": description, "image": image_bytes, "date": datetime.now()})
+              session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": image_bytes.getvalue()})
               session.commit()
           except Exception as e:
             st.error(f"Hiba történt: {e}")
@@ -181,34 +187,40 @@ elif selected == 'Image':
   
 elif selected == 'Picture Gallery':
   
-  left_co, cent_co,last_co = st.columns(3)
-  with cent_co:
-  
-    if len(gallery) == 1:
-      st.image(gallery[0])
-      
-      now = datetime.now().strftime('%Y%m%d%H%M%S')
-      filename = 'image' + now + '.png'
-      # r = requests.get(gallery[0])
-      st.download_button(label = 'Download Image',
-                          data = gallery[0], # BytesIO(r.content),
-                          file_name = filename,
-                          mime = 'image/png')
-                          
-    elif len(gallery) > 1:
-      PictureRow = st.slider('Choose picture from your actual online gallery:', 0, len(gallery) - 1, 0)
-      st.image(gallery[PictureRow])
-      
-      now = datetime.now().strftime('%Y%m%d%H%M%S')
-      filename = 'image' + now + '.png'
-      # r = requests.get(gallery[PictureRow])
-      st.download_button(label = 'Download Image',
-                          data = gallery[PictureRow], # BytesIO(r.content),
-                          file_name = filename,
-                          mime = 'image/png')
-  
-    else:
-      st.success("You didn't make any image in this online session still.")
+  if st.user.is_logged_in:
+    df = conn.query("SELECT image FROM images", ttl = "10m")
+    st.image(df[0])
+    # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
+    # element = st.dataframe(df, hide_index = True)
+  else:
+    left_co, cent_co,last_co = st.columns(3)
+    with cent_co:
+    
+      if len(gallery) == 1:
+        st.image(gallery[0])
+        
+        now = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = 'image' + now + '.png'
+        # r = requests.get(gallery[0])
+        st.download_button(label = 'Download Image',
+                            data = gallery[0], # BytesIO(r.content),
+                            file_name = filename,
+                            mime = 'image/png')
+                            
+      elif len(gallery) > 1:
+        PictureRow = st.slider('Choose picture from your actual online gallery:', 0, len(gallery) - 1, 0)
+        st.image(gallery[PictureRow])
+        
+        now = datetime.now().strftime('%Y%m%d%H%M%S')
+        filename = 'image' + now + '.png'
+        # r = requests.get(gallery[PictureRow])
+        st.download_button(label = 'Download Image',
+                            data = gallery[PictureRow], # BytesIO(r.content),
+                            file_name = filename,
+                            mime = 'image/png')
+    
+      else:
+        st.success("You didn't make any image in this online session still.")
 
 elif selected == "Video":
   
@@ -250,7 +262,7 @@ elif selected == "Video":
           if st.user.is_logged_in:
             try:
               with conn.session as session:
-                session.execute(text("""INSERT INTO videos(email, model, content, video, date) VALUES (:email, :model, :content, :video, :date)"""), {"email": st.user.email, "model": model3, "content": content, "video": video_bytes, "date": datetime.now()})
+                session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": video_bytes.getvalue()})
                 session.commit()
             except Exception as e:
               st.error(f"Hiba történt: {e}")
