@@ -30,9 +30,12 @@ def databaseConnection():
   conn = st.connection("postgresql", type = "sql")
   return conn
 
+def get_raw_data():
+    return conn.query("SELECT image FROM images", ttl = None)
+  
 @st.cache_data(ttl = None) 
 def get_images():
-  df_raw = conn.query("SELECT image FROM images", ttl = None)
+  df_raw = get_raw_data()
   df = pd.DataFrame(df_raw).copy()
   def to_base64(x):
         try:
