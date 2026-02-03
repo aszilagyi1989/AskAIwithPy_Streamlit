@@ -176,7 +176,7 @@ elif selected == 'Image':
           image_base64 = response.data[0].b64_json
           image_bytes = base64.b64decode(image_base64)
           gallery.append(image_bytes)
-          image_bytes = io.BytesIO(image_bytes)
+          image_bytes = BytesIO(image_bytes)
           
         if st.user.is_logged_in:
           try:
