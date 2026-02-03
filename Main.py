@@ -192,6 +192,7 @@ elif selected == 'Image':
             with conn.session as session:
               session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{filename}"})
               session.commit()
+              st.success("Beszúrtam")
           except Exception as e:
             st.error(f"Hiba történt: {e}")
           
@@ -230,11 +231,11 @@ elif selected == 'Picture Gallery':
         # r = requests.get(gallery[0])
         st.download_button(label = 'Download Image',
                             data = df['image'].iloc[0], # BytesIO(r.content),
-                            file_name = df['image'].iloc[PictureRow][-23:],
+                            file_name = df['image'].iloc[0][-23:],
                             mime = 'image/png')
                             
       elif len(df) > 1:
-        PictureRow = st.slider('Choose picture from your online gallery:', 0, len(df) - 1, 0)
+        PictureRow = st.slider('Choose picture from your gallery:', 0, len(df) - 1, 0)
         st.image(df[PictureRow])
         
         now = datetime.now().strftime('%Y%m%d%H%M%S')
