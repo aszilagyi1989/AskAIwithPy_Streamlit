@@ -276,7 +276,7 @@ elif selected == 'Picture Gallery':
 
 elif selected == "Video":
   
-  model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-1'])
+  model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-2-2025-10-06', 'sora-2-2025-12-08'])
   duration = st.selectbox('Choose duration:', options = ['4', '8', '12'])
   # size = st.selectbox('Choose size:', options = ['1280x720', '720x1280'])
   content = st.text_area('Write here the story of the video:', placeholder = 'Story of the video?', value = None)
