@@ -53,8 +53,8 @@ conn = st.connection("postgresql", type = "sql")
 
 try:
   with conn.session as session:
-    # session.execute(text("DROP TABLE IF EXISTS chats"))
-    # session.commit()
+    session.execute(text("DROP TABLE IF EXISTS chats"))
+    session.commit()
         
     session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
       id SERIAL PRIMARY KEY, 
