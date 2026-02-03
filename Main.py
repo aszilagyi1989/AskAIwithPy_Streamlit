@@ -145,7 +145,7 @@ if selected == 'Chat':
 
 elif selected == 'Messages':
   if st.user.is_logged_in:
-    df = conn.query("SELECT model, question, answer FROM chats", ttl = None) # "10m"
+    df = conn.query("SELECT model, question, answer FROM chats", ttl = 0) # None "10m"
     # df = conn.query("SELECT * FROM chats WHERE model = :name", params={"name": "gpt-4"})
     element = st.dataframe(df, hide_index = True)
   else:
@@ -217,7 +217,7 @@ elif selected == 'Picture Gallery':
   left_co, cent_co,last_co = st.columns(3)
   
   if st.user.is_logged_in:
-    df = conn.query("SELECT * FROM images", ttl = None)
+    df = conn.query("SELECT * FROM images", ttl = 0)
     st.dataframe(df)
     st.success(len(df))
     
