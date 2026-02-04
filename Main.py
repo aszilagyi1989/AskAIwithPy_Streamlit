@@ -72,8 +72,8 @@ else:
 conn = databaseConnection()
 s3 = amazon()
 
-try:
-  with conn.session as session:
+# try:
+#   with conn.session as session:
     # session.execute(text("DROP TABLE IF EXISTS chats"))
     # session.commit()
     # 
@@ -83,36 +83,36 @@ try:
     # session.execute(text("DROP TABLE IF EXISTS videos"))
     # session.commit()
         
-    session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
-      id SERIAL PRIMARY KEY, 
-      email TEXT, 
-      model VARCHAR(30), 
-      question TEXT, 
-      answer TEXT, 
-      date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
-    session.commit()
+    # session.execute(text("""CREATE TABLE IF NOT EXISTS chats (
+    #   id SERIAL PRIMARY KEY, 
+    #   email TEXT, 
+    #   model VARCHAR(30), 
+    #   question TEXT, 
+    #   answer TEXT, 
+    #   date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
+    # session.commit()
+    # 
+    # session.execute(text("""CREATE TABLE IF NOT EXISTS images (
+    #   id SERIAL PRIMARY KEY, 
+    #   email TEXT, 
+    #   model VARCHAR(30), 
+    #   description TEXT, 
+    #   image TEXT, 
+    #   date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
+    # session.commit()
+    # 
+    # session.execute(text("""CREATE TABLE IF NOT EXISTS videos (
+    #   id SERIAL PRIMARY KEY, 
+    #   email TEXT, 
+    #   model VARCHAR(30), 
+    #   content TEXT, 
+    #   video TEXT, 
+    #   date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
+    # session.commit()
     
-    session.execute(text("""CREATE TABLE IF NOT EXISTS images (
-      id SERIAL PRIMARY KEY, 
-      email TEXT, 
-      model VARCHAR(30), 
-      description TEXT, 
-      image TEXT, 
-      date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
-    session.commit()
     
-    session.execute(text("""CREATE TABLE IF NOT EXISTS videos (
-      id SERIAL PRIMARY KEY, 
-      email TEXT, 
-      model VARCHAR(30), 
-      content TEXT, 
-      video TEXT, 
-      date timestamp DEFAULT CURRENT_TIMESTAMP)"""))
-    session.commit()
-    
-    
-except Exception as e:
-  st.error(f"Error creating table: {e}")
+# except Exception as e:
+#   st.error(f"Error creating table: {e}")
     
 st.title('Ask AI with Python', anchor = False, help = None)
 password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys", key = "my_key") # st.session_state.my_text 
