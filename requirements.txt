@@ -3,7 +3,7 @@ boto3
 datetime
 openai
 pandas
-psycopg2-binary
+psycopg[binary]
 sqlalchemy
 streamlit==1.53.0
 streamlit-option-menu
