@@ -120,7 +120,8 @@ selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery', 'V
 
 if selected == 'Chat': 
   
-  model = st.selectbox('Choose AI Model:', options = ['gpt-5.2', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
+  # model = st.selectbox('Choose AI Model:', options = ['gpt-5.2', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
+  model = st.selectbox('Choose AI Model:', options = ['gpt-4o-mini', 'gpt-4o', 'o3-mini', 'o1'])
   question = st.text_area('Write here your question:', placeholder = 'Ask something!', value = None) # question = st.chat_input(placeholder = 'Write here your question:') 
   
   if st.button('Answer me!'): 
@@ -173,16 +174,10 @@ elif selected == 'Image':
         now = datetime.now().strftime('%Y%m%d%H%M%S')
         filename = 'image' + now + '.png'
         
-        if model2 == 'dall-e-3':
-          link = response.data[0].url
-          r = requests.get(link)
-          image_bytes = BytesIO(r.content)
-          gallery.append(image_bytes) # link
-        else:
-          image_base64 = response.data[0].b64_json
-          image_bytes = base64.b64decode(image_base64)
-          gallery.append(image_bytes)
-          image_bytes = BytesIO(image_bytes)
+        image_base64 = response.data[0].b64_json
+        image_bytes = base64.b64decode(image_base64)
+        gallery.append(image_bytes)
+        image_bytes = BytesIO(image_bytes)
           
         if st.user.is_logged_in:
           try:
@@ -198,22 +193,12 @@ elif selected == 'Image':
             with conn.session as session:
               session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{st.user.email}/{filename}"})
               session.commit()
-              # st.success("Beszúrtam")
           except Exception as e:
             st.error(f"Hiba történt: {e}")
-          
-        # image_bytes.seek(0)
-        # image = Image.open(image_bytes)
           
         left_co, cent_co,last_co = st.columns(3)
         with cent_co:
           st.image(gallery[-1])
-          # st.image(image_bytes)
-            
-          # st.download_button(label = 'Download Image',
-          #                    data = gallery[-1], # image_bytes, # BytesIO(r.content)
-          #                    file_name = filename,
-          #                    mime = 'image/png')
           
     except Exception as e:
       st.error(f'An Error happened: {e}')
