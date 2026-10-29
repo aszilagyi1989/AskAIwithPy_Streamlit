@@ -195,7 +195,7 @@ elif selected == 'Image':
             
           try:
             with conn.session as session:
-              session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{filename}"})
+              session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{st.user.email}/{filename}"})
               session.commit()
               st.success("Beszúrtam")
           except Exception as e:
@@ -332,7 +332,7 @@ elif selected == "Video":
               
             try:
               with conn.session as session:
-                session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{video.id}"})
+                session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{st.user.email}/{video.id}"})
                 session.commit()
             except Exception as e:
               st.error(f"Hiba történt a videó linkjének mentése közben: {e}")
