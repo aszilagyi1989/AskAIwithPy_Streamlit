@@ -198,7 +198,7 @@ elif selected == 'Image':
             with conn.session as session:
               session.execute(text("""INSERT INTO images(email, model, description, image) VALUES (:email, :model, :description, :image)"""), {"email": st.user.email, "model": model2, "description": description, "image": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{st.user.email}/{filename}"})
               session.commit()
-              st.success("Beszúrtam")
+              # st.success("Beszúrtam")
           except Exception as e:
             st.error(f"Hiba történt: {e}")
           
