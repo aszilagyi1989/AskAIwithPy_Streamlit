@@ -187,7 +187,7 @@ elif selected == 'Image':
           try:
             s3.put_object(
               Bucket = 'askaiwithpy', 
-              Key = filename, 
+              Key = f"{st.user.email}/{filename}", 
               Body = image_bytes.getvalue()
           )
           except NoCredentialsError:
@@ -324,7 +324,7 @@ elif selected == "Video":
             try:
               s3.put_object(
                 Bucket = 'askaiwithpy', 
-                Key = f"{video.id}", 
+                Key = f"{st.user.email}/{video.id}", 
                 Body = video_bytes # .getvalue()
             )
             except NoCredentialsError:
