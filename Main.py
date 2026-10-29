@@ -116,7 +116,7 @@ s3 = amazon()
     
 st.title('Ask AI with Python', anchor = False, help = None)
 password = st.text_input('Set your OpenAI API key:', type = 'password', value = os.environ['OPENAI_API_KEY'], placeholder = "If you don't have one, then you can create here: https://platform.openai.com/api-keys", key = "my_key") # st.session_state.my_text 
-selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery', 'Video', 'Video Gallery'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal')
+selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery'], menu_icon = 'cast', default_index = 0, orientation = 'horizontal') # , 'Video', 'Video Gallery'
 
 if selected == 'Chat': 
   
@@ -269,124 +269,124 @@ elif selected == 'Picture Gallery':
       else:
         st.success("You didn't make any image in this online session still.")
 
-elif selected == "Video":
-  
-  model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-2-2025-10-06', 'sora-2-2025-12-08'])
-  # model3 = st.selectbox('Choose AI Model:', options = ['kling-v1-6', 'kling-v3-0', 'luma-ray-3.2-draft', 'luma-ray-3.2-standard', 'google-veo-3.1-lite', 'google-veo-3.1-standard', 'runway-gen-4'])
-  
-  duration = st.selectbox('Choose duration:', options = ['4', '8', '12'])
-  # size = st.selectbox('Choose size:', options = ['1280x720', '720x1280'])
-  content = st.text_area('Write here the story of the video:', placeholder = 'Story of the video?', value = None)
-  
-  try:
-    if st.button('Shoot me!'):
-      with st.spinner('In progress...'):
-        client = OpenAI(api_key = password)
-    
-        video = client.videos.create(
-          model = model3,
-          prompt = content, # A futuristic city in the style of cyberpunk with neon lights. # A calico cat playing a piano on stage
-          size = "1280x720", # Optional: 720x1280, 1280x720, 1024x1792, 1792x1024
-          seconds = duration      # Optional: 4, 8, or 12 seconds
-        )
-      
-        # print(video.id)
-      
-        completed_video = client.videos.retrieve(video.id) 
-        # print(completed_video)
-        while completed_video.status != "completed":
-          completed_video = client.videos.retrieve(video.id)
-          if completed_video.status == "failed":
-            st.error(f"This video can not be created: {completed_video}") # : {completed_video.message}
-            break
-        
-        if completed_video.status == "completed":
-          # st.success(completed_video)
-          st.success(f"You can download this video: {video.id}.mp4")
-          video_content = client.videos.download_content(completed_video.id)
-          video_bytes = video_content.read()
-          video_gallery.append(video_bytes)
-          st.video(video_bytes)
-          
-          if st.user.is_logged_in:
-            try:
-              s3.put_object(
-                Bucket = 'askaiwithpy', 
-                Key = f"{st.user.email}/{video.id}", 
-                Body = video_bytes # .getvalue()
-            )
-            except NoCredentialsError:
-              st.error(f"Hiba történt a videó feltöltése során: {e}")
-              
-            try:
-              with conn.session as session:
-                session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{st.user.email}/{video.id}"})
-                session.commit()
-            except Exception as e:
-              st.error(f"Hiba történt a videó linkjének mentése közben: {e}")
-              
-  except Exception as e:
-    st.error(f'An Error happened: {e}')
-
-elif selected == 'Video Gallery':
-  
-  left_co, cent_co,last_co = st.columns(3)
-  
-  if st.user.is_logged_in:
-    df = conn.query("SELECT * FROM videos", ttl = 0)
-    
-    with cent_co:
-    
-      if len(df) == 1:
-        
-        st.video(df['video'].iloc[0])
-        
-        response = requests.get(df['video'].iloc[0])
-        image_bytes = response.content
-        st.download_button(label = 'Download Video',
-                            data = image_bytes,
-                            file_name = f"video_{str(df['video'].iloc[0]).split("_")[1]}.mp4",
-                            mime = 'video/mp4')
-                            
-      elif len(df) > 1:
-        
-        PictureRow = st.slider('Choose video from your gallery:', 0, len(df) - 1, 0)
-        st.video(df['video'].iloc[PictureRow])
-        
-        response = requests.get(df['video'].iloc[PictureRow])
-        image_bytes = response.content
-
-        st.download_button(label = 'Download Video',
-                            data = image_bytes,
-                            file_name = f"video_{str(df['video'].iloc[PictureRow]).split("_")[1]}.mp4",
-                            mime = 'video/mp4')
-    
-      else:
-        st.success("You didn't make any video still.")
-
-  else:
-    with cent_co:
-    
-      if len(video_gallery) == 1:
-        st.video(video_gallery[0])
-        
-        now = datetime.now().strftime('%Y%m%d%H%M%S')
-        filename = 'video' + now + '.mp4'
-        st.download_button(label = 'Download Video',
-                            data = video_gallery[0], # BytesIO(r.content),
-                            file_name = filename,
-                            mime = 'image/png')
-                            
-      elif len(video_gallery) > 1:
-        VideoRow = st.slider('Choose video from your actual online gallery:', 0, len(video_gallery) - 1, 0)
-        st.video(video_gallery[VideoRow])
-        
-        now = datetime.now().strftime('%Y%m%d%H%M%S')
-        filename = 'video' + now + '.mp4'
-        st.download_button(label = 'Download Video',
-                            data = video_gallery[VideoRow], # BytesIO(r.content),
-                            file_name = filename,
-                            mime = 'video/mp4')
-    
-      else:
-        st.success("You didn't make any video in this online session still.")
+# elif selected == "Video":
+#   
+#   model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-2-2025-10-06', 'sora-2-2025-12-08'])
+#   # model3 = st.selectbox('Choose AI Model:', options = ['kling-v1-6', 'kling-v3-0', 'luma-ray-3.2-draft', 'luma-ray-3.2-standard', 'google-veo-3.1-lite', 'google-veo-3.1-standard', 'runway-gen-4'])
+#   
+#   duration = st.selectbox('Choose duration:', options = ['4', '8', '12'])
+#   # size = st.selectbox('Choose size:', options = ['1280x720', '720x1280'])
+#   content = st.text_area('Write here the story of the video:', placeholder = 'Story of the video?', value = None)
+#   
+#   try:
+#     if st.button('Shoot me!'):
+#       with st.spinner('In progress...'):
+#         client = OpenAI(api_key = password)
+#     
+#         video = client.videos.create(
+#           model = model3,
+#           prompt = content, # A futuristic city in the style of cyberpunk with neon lights. # A calico cat playing a piano on stage
+#           size = "1280x720", # Optional: 720x1280, 1280x720, 1024x1792, 1792x1024
+#           seconds = duration      # Optional: 4, 8, or 12 seconds
+#         )
+#       
+#         # print(video.id)
+#       
+#         completed_video = client.videos.retrieve(video.id) 
+#         # print(completed_video)
+#         while completed_video.status != "completed":
+#           completed_video = client.videos.retrieve(video.id)
+#           if completed_video.status == "failed":
+#             st.error(f"This video can not be created: {completed_video}") # : {completed_video.message}
+#             break
+#         
+#         if completed_video.status == "completed":
+#           # st.success(completed_video)
+#           st.success(f"You can download this video: {video.id}.mp4")
+#           video_content = client.videos.download_content(completed_video.id)
+#           video_bytes = video_content.read()
+#           video_gallery.append(video_bytes)
+#           st.video(video_bytes)
+#           
+#           if st.user.is_logged_in:
+#             try:
+#               s3.put_object(
+#                 Bucket = 'askaiwithpy', 
+#                 Key = f"{st.user.email}/{video.id}", 
+#                 Body = video_bytes # .getvalue()
+#             )
+#             except NoCredentialsError:
+#               st.error(f"Hiba történt a videó feltöltése során: {e}")
+#               
+#             try:
+#               with conn.session as session:
+#                 session.execute(text("""INSERT INTO videos(email, model, content, video) VALUES (:email, :model, :content, :video)"""), {"email": st.user.email, "model": model3, "content": content, "video": f"https://askaiwithpy.s3.eu-north-1.amazonaws.com/{st.user.email}/{video.id}"})
+#                 session.commit()
+#             except Exception as e:
+#               st.error(f"Hiba történt a videó linkjének mentése közben: {e}")
+#               
+#   except Exception as e:
+#     st.error(f'An Error happened: {e}')
+# 
+# elif selected == 'Video Gallery':
+#   
+#   left_co, cent_co,last_co = st.columns(3)
+#   
+#   if st.user.is_logged_in:
+#     df = conn.query("SELECT * FROM videos", ttl = 0)
+#     
+#     with cent_co:
+#     
+#       if len(df) == 1:
+#         
+#         st.video(df['video'].iloc[0])
+#         
+#         response = requests.get(df['video'].iloc[0])
+#         image_bytes = response.content
+#         st.download_button(label = 'Download Video',
+#                             data = image_bytes,
+#                             file_name = f"video_{str(df['video'].iloc[0]).split("_")[1]}.mp4",
+#                             mime = 'video/mp4')
+#                             
+#       elif len(df) > 1:
+#         
+#         PictureRow = st.slider('Choose video from your gallery:', 0, len(df) - 1, 0)
+#         st.video(df['video'].iloc[PictureRow])
+#         
+#         response = requests.get(df['video'].iloc[PictureRow])
+#         image_bytes = response.content
+# 
+#         st.download_button(label = 'Download Video',
+#                             data = image_bytes,
+#                             file_name = f"video_{str(df['video'].iloc[PictureRow]).split("_")[1]}.mp4",
+#                             mime = 'video/mp4')
+#     
+#       else:
+#         st.success("You didn't make any video still.")
+# 
+#   else:
+#     with cent_co:
+#     
+#       if len(video_gallery) == 1:
+#         st.video(video_gallery[0])
+#         
+#         now = datetime.now().strftime('%Y%m%d%H%M%S')
+#         filename = 'video' + now + '.mp4'
+#         st.download_button(label = 'Download Video',
+#                             data = video_gallery[0], # BytesIO(r.content),
+#                             file_name = filename,
+#                             mime = 'image/png')
+#                             
+#       elif len(video_gallery) > 1:
+#         VideoRow = st.slider('Choose video from your actual online gallery:', 0, len(video_gallery) - 1, 0)
+#         st.video(video_gallery[VideoRow])
+#         
+#         now = datetime.now().strftime('%Y%m%d%H%M%S')
+#         filename = 'video' + now + '.mp4'
+#         st.download_button(label = 'Download Video',
+#                             data = video_gallery[VideoRow], # BytesIO(r.content),
+#                             file_name = filename,
+#                             mime = 'video/mp4')
+#     
+#       else:
+#         st.success("You didn't make any video in this online session still.")
