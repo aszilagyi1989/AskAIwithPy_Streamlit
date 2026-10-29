@@ -158,7 +158,8 @@ elif selected == 'Messages':
 
 elif selected == 'Image':
   
-  model2 = st.selectbox('Choose AI Model:', options = ['dall-e-3', 'chatgpt-image-latest', 'gpt-image-1.5', 'gpt-image-1', 'gpt-image-1-mini']) #  'gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'chatgpt-image-latest', 'dall-e-2', and 'dall-e-3'.
+  # model2 = st.selectbox('Choose AI Model:', options = ['dall-e-3', 'chatgpt-image-latest', 'gpt-image-1.5', 'gpt-image-1', 'gpt-image-1-mini']) #  'gpt-image-1', 'gpt-image-1-mini', 'gpt-image-1.5', 'chatgpt-image-latest', 'dall-e-2', and 'dall-e-3'.
+  model2 = st.selectbox('Choose AI Model:', options = ['chatgpt-image-latest', 'gpt-image-1.5', 'gpt-image-2', 'gpt-image-2.5-flare', 'gpt-image-2.5-sunburst']) 
   description = st.text_area('What should the picture depict?', placeholder = 'Describe here...')
   if st.button('Draw me!'):
     try:
@@ -285,7 +286,9 @@ elif selected == 'Picture Gallery':
 
 elif selected == "Video":
   
-  model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-2-2025-10-06', 'sora-2-2025-12-08'])
+  # model3 = st.selectbox('Choose AI Model:', options = ['sora-2', 'sora-2-pro', 'sora-2-2025-10-06', 'sora-2-2025-12-08'])
+  model3 = st.selectbox('Choose AI Model:', options = ['kling-v1-6', 'kling-v3-0', 'luma-ray-3.2-draft', 'luma-ray-3.2-standard', 'google-veo-3.1-lite', 'google-veo-3.1-standard', 'runway-gen-4'])
+  
   duration = st.selectbox('Choose duration:', options = ['4', '8', '12'])
   # size = st.selectbox('Choose size:', options = ['1280x720', '720x1280'])
   content = st.text_area('Write here the story of the video:', placeholder = 'Story of the video?', value = None)
