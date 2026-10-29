@@ -121,7 +121,7 @@ selected = option_menu(None, ['Chat', 'Messages', 'Image', 'Picture Gallery', 'V
 if selected == 'Chat': 
   
   # model = st.selectbox('Choose AI Model:', options = ['gpt-5.2', 'gpt-5', 'gpt-5-mini', 'gpt-5-nano'])
-  model = st.selectbox('Choose AI Model:', options = ['gpt-4o-mini', 'gpt-4o', 'o3-mini', 'o1'])
+  model = st.selectbox('Choose AI Model:', options = ['gpt-4o', 'gpt-5.5', 'gpt-6-sol', 'gpt-6-luna', 'gpt-6.1-sol', 'gpt-6.1-terra', 'gpt-6-astra', 'o3'])
   question = st.text_area('Write here your question:', placeholder = 'Ask something!', value = None) # question = st.chat_input(placeholder = 'Write here your question:') 
   
   if st.button('Answer me!'): 
